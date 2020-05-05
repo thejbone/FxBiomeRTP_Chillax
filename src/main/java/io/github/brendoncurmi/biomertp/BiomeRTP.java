@@ -25,13 +25,18 @@
 package io.github.brendoncurmi.biomertp;
 
 import com.google.inject.Inject;
+import io.github.brendoncurmi.biomertp.commands.RTPCommand;
 import org.slf4j.Logger;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
 
 import java.nio.file.Path;
 
@@ -59,6 +64,14 @@ public class BiomeRTP extends PluginInfo {
 
     @Listener
     public void preInit(GamePreInitializationEvent event) {
+        Sponge.getCommandManager().register(instance, CommandSpec.builder()
+                .description(Text.of("Teleports the player to a random location"))
+                .permission(CMD_PERM + "rtp")
+                .arguments(
+                        GenericArguments.optional(GenericArguments.player(Text.of("target")))
+                )
+                .executor(new RTPCommand())
+                .build(), "rtp");
     }
 
     public static BiomeRTP getInstance() {
