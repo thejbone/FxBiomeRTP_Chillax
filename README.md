@@ -1,4 +1,6 @@
 # BiomeRTP
+[![license](https://img.shields.io/github/license/BrendonCurmi/BiomeRTP)](https://github.com/BrendonCurmi/BiomeRTP/blob/master/LICENSE)
+[![discord](https://discordapp.com/api/guilds/699764448155533404/widget.png)](https://discord.gg/VFNTycm)
 
 This plugin allows players to randomly teleport across the world and to specific biome types.
 
