@@ -1,0 +1,13 @@
+[
+    {
+        "modid": "biomertp",
+        "name": "BiomeRTP",
+        "description": "This plugin allows players to randomly teleport across the world and to specific biome types",
+        "authorList": ["FusionDev"],
+        "version": "1.0",
+        "mcversion": "1.12.2",
+        "dependencies": [
+            "spongeapi@7.1.0"
+        ]
+    }
+]
