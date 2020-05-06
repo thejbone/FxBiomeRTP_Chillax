@@ -25,6 +25,10 @@
 package io.github.brendoncurmi.biomertp;
 
 import com.google.inject.Inject;
+import io.github.brendoncurmi.biomertp.api.BiomeUtils;
+import io.github.brendoncurmi.biomertp.api.FileFactory;
+import io.github.brendoncurmi.biomertp.api.SpiralScan;
+import io.github.brendoncurmi.biomertp.commands.BiomeRTPCommand;
 import io.github.brendoncurmi.biomertp.commands.RTPCommand;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -33,12 +37,19 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Plugin(id = BiomeRTP.ID,
         name = BiomeRTP.NAME,
@@ -54,16 +65,43 @@ public class BiomeRTP extends PluginInfo {
 
     private Path configDir;
     private Logger logger;
+    private PluginContainer pluginContainer;
+    private File file;
+    private BiomeUtils biomeUtils;
+    private SpiralScan spiralScan;
+    private Task task;
 
     @Inject
     public BiomeRTP(@ConfigDir(sharedRoot = false) Path configDir, Logger logger, PluginContainer pluginContainer) {
         BiomeRTP.instance = this;
         this.configDir = configDir;
         this.logger = logger;
+        this.pluginContainer = pluginContainer;
     }
 
     @Listener
-    public void preInit(GamePreInitializationEvent event) {
+    public void preInit(GamePreInitializationEvent event) throws IllegalAccessException {
+        file = Paths.get(this.configDir.toString(), ID + ".ser").toFile();
+
+        biomeUtils = file.exists() ? (BiomeUtils) FileFactory.deserialize(file.getAbsolutePath()) : new BiomeUtils();
+
+        try {
+            Files.createDirectories(this.configDir);
+            file.createNewFile();
+        } catch (IOException ex) {
+            logger.error("Error loading '" + configDir.toString() + "' directory", ex);
+        }
+
+        Sponge.getCommandManager().register(instance, CommandSpec.builder()
+                .description(Text.of("Teleports the player to a random biome or biome type"))
+                .permission(CMD_PERM + "biomertp")
+                .arguments(
+                        GenericArguments.string(Text.of("biome")),
+                        GenericArguments.optional(GenericArguments.player(Text.of("target")))
+                )
+                .executor(new BiomeRTPCommand())
+                .build(), "biomertp");
+
         Sponge.getCommandManager().register(instance, CommandSpec.builder()
                 .description(Text.of("Teleports the player to a random location"))
                 .permission(CMD_PERM + "rtp")
@@ -72,9 +110,46 @@ public class BiomeRTP extends PluginInfo {
                 )
                 .executor(new RTPCommand())
                 .build(), "rtp");
+
+        BiomeUtils.initBiomes();
+    }
+
+    @Listener
+    public void onServerStart(GameStartedServerEvent event) {
+        spiralScan = new SpiralScan(location -> {
+            biomeUtils.getBiomeData(BiomeUtils.getBiomeName(location.getBiome())).addCoord(location.getBlockX(), location.getBlockZ());
+            logger.info("Scanned " + location.getX() + "," + location.getZ());
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            //location.setBlockType(BlockTypes.BONE_BLOCK);
+            //System.out.println(location.getChunkPosition());
+        });
+
+        if (biomeUtils.empty()) {
+            task = Task.builder().execute(() -> {
+                getSpiralScan().startScan();
+            }).async().name("BiomeRTP Scanner").submit(pluginContainer);
+        }
+    }
+
+    @Listener
+    public void onServerStop(GameStoppingEvent event) {
+        if (task != null) task.cancel();
+        FileFactory.serialize(biomeUtils, file.getAbsolutePath());
     }
 
     public static BiomeRTP getInstance() {
         return BiomeRTP.instance;
+    }
+
+    public BiomeUtils getBiomeUtils() {
+        return biomeUtils;
+    }
+
+    public SpiralScan getSpiralScan() {
+        return spiralScan;
     }
 }
