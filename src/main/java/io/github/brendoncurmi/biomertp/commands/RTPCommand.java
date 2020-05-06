@@ -25,6 +25,7 @@
 package io.github.brendoncurmi.biomertp.commands;
 
 import io.github.brendoncurmi.biomertp.api.MathUtils;
+import io.github.brendoncurmi.biomertp.api.TeleportHelper;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -32,7 +33,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.util.Optional;
@@ -43,10 +43,6 @@ public class RTPCommand implements CommandExecutor {
      * The maximum number of blocks along each axis the player can teleport to.
      */
     private static final int MAX_BLOCKS = 1000000;
-    /**
-     * The number of blocks high (along the Y axis) to initially teleport the player.
-     */
-    private static final int HIGH_Y = 900;
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) {
@@ -58,10 +54,7 @@ public class RTPCommand implements CommandExecutor {
         Player player = target.orElseGet(() -> (Player) src);
         int x = MathUtils.getRandomNumberInRange(0, MAX_BLOCKS);
         int z = MathUtils.getRandomNumberInRange(0, MAX_BLOCKS);
-        // Teleport the player to the location but send them very high in the sky so the chunks load, then it's
-        // possible to get the highest Y at the location and send the player to that Y (+2 to be outside blocks).
-        player.setLocation(new Location<>(player.getWorld(), x, HIGH_Y, z));
-        player.setLocation(new Location<>(player.getWorld(), x, player.getWorld().getHighestYAt(x, z) + 2, z));
+        TeleportHelper.teleportPlayer(player, player.getWorld(), x, z);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
         return CommandResult.success();
     }
