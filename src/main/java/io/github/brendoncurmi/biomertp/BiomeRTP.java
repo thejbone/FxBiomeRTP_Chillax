@@ -93,7 +93,7 @@ public class BiomeRTP extends PluginInfo {
         }
 
         Sponge.getCommandManager().register(instance, CommandSpec.builder()
-                .description(Text.of("Teleports the player to a random biome or biome type"))
+                .description(Text.of("Teleports the player to a random biome"))
                 .permission(CMD_PERM + "biomertp")
                 .arguments(
                         GenericArguments.string(Text.of("biome")),

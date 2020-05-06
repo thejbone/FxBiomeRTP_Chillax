@@ -27,8 +27,8 @@ package io.github.brendoncurmi.biomertp;
 public class PluginInfo {
     public static final String ID = "biomertp";
     public static final String NAME = "BiomeRTP";
-    public static final String VERSION = "1.1";
-    public static final String DESCRIPTION = "";
+    public static final String VERSION = "1.0";
+    public static final String DESCRIPTION = "This plugin allows players to randomly teleport across the world and to specific biome types.";
 
     public static final String CMD_PERM = ID + ".command.";
 }
