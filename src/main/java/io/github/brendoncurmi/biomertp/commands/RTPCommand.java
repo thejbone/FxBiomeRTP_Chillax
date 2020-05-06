@@ -39,12 +39,16 @@ import java.util.Optional;
 
 @NonnullByDefault
 public class RTPCommand implements CommandExecutor {
+    /**
+     * The maximum number of blocks along each axis the player can teleport to.
+     */
     private static final int MAX_BLOCKS = 1000000;
+
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) {
         Optional<Player> target = args.getOne("target");
         if (!(src instanceof Player) && !target.isPresent()) {
-            src.sendMessage(Text.of(TextColors.RED, "Using the command from this source requires specifying a target!"));
+            src.sendMessage(Text.of(TextColors.RED, "Using the command from this source requires specifying a target"));
             return CommandResult.empty();
         }
         Player player = target.orElseGet(() -> (Player) src);
