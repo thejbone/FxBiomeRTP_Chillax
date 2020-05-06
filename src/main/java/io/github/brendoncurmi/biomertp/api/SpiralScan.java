@@ -24,10 +24,7 @@
 
 package io.github.brendoncurmi.biomertp.api;
 
-import io.github.brendoncurmi.biomertp.BiomeUtils;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -92,10 +89,7 @@ public class SpiralScan {
                 if (worlds.size() < 1) throw new RuntimeException("Cannot run scan as cannot find any worlds");
                 World world = worlds.iterator().next();
                 Location<World> blockLoc = new Location<>(world, blockX, blockY, blockZ);
-
                 runnable.run(blockLoc);
-
-                BiomeUtils.getBiomeData(blockLoc.getBiome()).addCoord(blockX, blockZ);
             }
 
             if ((x == y) || ((x < 0) && (x == -y)) || ((x > 0) && (x == 1 - y))) {
@@ -111,5 +105,4 @@ public class SpiralScan {
     public interface Runnable {
         void run(Location<World> location);
     }
-
 }

@@ -24,10 +24,12 @@
 
 package io.github.brendoncurmi.biomertp.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BiomeData {
+public class BiomeData implements Serializable {
+    private static final long serialVersionUID = -7032943812492347010L;
 
     /**
      * Lists all the spawnable coordinates for this biome type.
