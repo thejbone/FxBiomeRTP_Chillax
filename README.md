@@ -8,8 +8,8 @@ After installing this plugin and starting up and loading the worlds for the firs
 chunks from 0,0 outward to 10000x10000 chunks along the X and Z axes.
 
 The scanner runs asynchronously to server functions, so the server is still usable and playable while the scan is running.
-But it's recommended to leave the server idle during scanning for at least 5-10 minutes as the console will display a
-message for each scanned chunk to notify you of the progress and boundaries of the scan.
+But it's recommended to leave the server idle during scanning for at least 5-20 minutes for a simple world and
+30-60 minutes for bigger servers as the server may lag enough to crash if a single tick takes >60 seconds.
 
 Due to the scope of how large the scan region is, the server will most likely be stopped before the scan has completely
 finished. The scan will not restart upon starting the server in the future, unless the `config/biomertp` folder
