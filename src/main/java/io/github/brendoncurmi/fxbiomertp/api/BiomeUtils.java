@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.biomertp.api;
+package io.github.brendoncurmi.fxbiomertp.api;
 
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;

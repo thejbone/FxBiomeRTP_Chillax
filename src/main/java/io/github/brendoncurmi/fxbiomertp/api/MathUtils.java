@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.biomertp.api;
+package io.github.brendoncurmi.fxbiomertp.api;
 
 import java.util.Random;
 

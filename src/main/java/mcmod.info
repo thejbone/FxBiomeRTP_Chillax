@@ -1,7 +1,7 @@
 [
     {
-        "modid": "biomertp",
-        "name": "BiomeRTP",
+        "modid": "fxbiomertp",
+        "name": "FxBiomeRTP",
         "description": "This plugin allows players to randomly teleport across the world and to specific biome types",
         "authorList": ["FusionDev"],
         "version": "1.0",

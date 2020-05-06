@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.biomertp;
+package io.github.brendoncurmi.fxbiomertp;
 
 import com.google.inject.Inject;
-import io.github.brendoncurmi.biomertp.api.BiomeUtils;
-import io.github.brendoncurmi.biomertp.api.FileFactory;
-import io.github.brendoncurmi.biomertp.api.SpiralScan;
-import io.github.brendoncurmi.biomertp.commands.BiomeRTPCommand;
-import io.github.brendoncurmi.biomertp.commands.RTPCommand;
+import io.github.brendoncurmi.fxbiomertp.api.BiomeUtils;
+import io.github.brendoncurmi.fxbiomertp.api.FileFactory;
+import io.github.brendoncurmi.fxbiomertp.api.SpiralScan;
+import io.github.brendoncurmi.fxbiomertp.commands.BiomeRTPCommand;
+import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -51,17 +51,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Plugin(id = BiomeRTP.ID,
-        name = BiomeRTP.NAME,
-        version = BiomeRTP.VERSION,
+@Plugin(id = FxBiomeRTP.ID,
+        name = FxBiomeRTP.NAME,
+        version = FxBiomeRTP.VERSION,
         authors = {"FusionDev"},
-        description = BiomeRTP.DESCRIPTION,
+        description = FxBiomeRTP.DESCRIPTION,
         dependencies = {
                 @Dependency(id = "spongeapi", version = "7.1.0")
         })
-public class BiomeRTP extends PluginInfo {
+public class FxBiomeRTP extends PluginInfo {
 
-    private static BiomeRTP instance;
+    private static FxBiomeRTP instance;
 
     private Path configDir;
     private Logger logger;
@@ -72,8 +72,8 @@ public class BiomeRTP extends PluginInfo {
     private Task task;
 
     @Inject
-    public BiomeRTP(@ConfigDir(sharedRoot = false) Path configDir, Logger logger, PluginContainer pluginContainer) {
-        BiomeRTP.instance = this;
+    public FxBiomeRTP(@ConfigDir(sharedRoot = false) Path configDir, Logger logger, PluginContainer pluginContainer) {
+        FxBiomeRTP.instance = this;
         this.configDir = configDir;
         this.logger = logger;
         this.pluginContainer = pluginContainer;
@@ -131,7 +131,7 @@ public class BiomeRTP extends PluginInfo {
         if (biomeUtils.empty()) {
             task = Task.builder().execute(() -> {
                 getSpiralScan().startScan();
-            }).async().name("BiomeRTP Scanner").submit(pluginContainer);
+            }).async().name("FxBiomeRTP Scanner").submit(pluginContainer);
         }
     }
 
@@ -141,8 +141,8 @@ public class BiomeRTP extends PluginInfo {
         FileFactory.serialize(biomeUtils, file.getAbsolutePath());
     }
 
-    public static BiomeRTP getInstance() {
-        return BiomeRTP.instance;
+    public static FxBiomeRTP getInstance() {
+        return FxBiomeRTP.instance;
     }
 
     public BiomeUtils getBiomeUtils() {

@@ -22,13 +22,26 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.biomertp;
+package io.github.brendoncurmi.fxbiomertp.api;
 
-public class PluginInfo {
-    public static final String ID = "biomertp";
-    public static final String NAME = "BiomeRTP";
-    public static final String VERSION = "1.0";
-    public static final String DESCRIPTION = "This plugin allows players to randomly teleport across the world and to specific biome types.";
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final String CMD_PERM = ID + ".command.";
+public class BiomeData implements Serializable {
+    private static final long serialVersionUID = -7032943812492347010L;
+
+    /**
+     * Lists all the spawnable coordinates for this biome type.
+     */
+    private List<int[]> coords = new ArrayList<>();
+
+    public void addCoord(int x, int y) {
+        coords.add(new int[]{x, y});
+    }
+
+    public int[] getRandomCoord() {
+        if (coords.size() == 0) throw new IllegalArgumentException("Coords is empty");
+        return coords.get(MathUtils.getRandomNumberInRange(0, coords.size() - 1));
+    }
 }

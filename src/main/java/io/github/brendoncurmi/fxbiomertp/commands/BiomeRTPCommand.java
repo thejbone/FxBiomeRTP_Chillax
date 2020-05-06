@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.biomertp.commands;
+package io.github.brendoncurmi.fxbiomertp.commands;
 
-import io.github.brendoncurmi.biomertp.BiomeRTP;
-import io.github.brendoncurmi.biomertp.api.TeleportHelper;
+import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
+import io.github.brendoncurmi.fxbiomertp.api.TeleportHelper;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -33,8 +33,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.util.*;
@@ -51,12 +49,12 @@ public class BiomeRTPCommand implements CommandExecutor {
 
         Player player = target.orElseGet(() -> (Player) src);
         String biome = args.requireOne("biome");
-        if (!BiomeRTP.getInstance().getBiomeUtils().hasBiome(biome)) {
+        if (!FxBiomeRTP.getInstance().getBiomeUtils().hasBiome(biome)) {
             player.sendMessage(Text.of(TextColors.RED, "Cannot find biome '" + biome + "'"));
             return CommandResult.empty();
         }
 
-        int[] coords = BiomeRTP.getInstance().getBiomeUtils().getBiomeData(biome).getRandomCoord();
+        int[] coords = FxBiomeRTP.getInstance().getBiomeUtils().getBiomeData(biome).getRandomCoord();
         TeleportHelper.teleportPlayer(player, player.getWorld(), coords[0], coords[1]);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported to a(n) " + player.getLocation().getBiome().getName() + " biome!"));
         return CommandResult.success();

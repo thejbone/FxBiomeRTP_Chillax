@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.biomertp.commands;
+package io.github.brendoncurmi.fxbiomertp.commands;
 
-import io.github.brendoncurmi.biomertp.api.MathUtils;
-import io.github.brendoncurmi.biomertp.api.TeleportHelper;
+import io.github.brendoncurmi.fxbiomertp.api.MathUtils;
+import io.github.brendoncurmi.fxbiomertp.api.TeleportHelper;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
