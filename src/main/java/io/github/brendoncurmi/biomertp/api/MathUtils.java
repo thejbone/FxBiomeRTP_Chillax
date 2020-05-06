@@ -35,7 +35,7 @@ public class MathUtils {
      * @return a random integer between min and max, both inclusive.
      */
     public static int getRandomNumberInRange(int min, int max) {
-        if (min >= max) throw new IllegalArgumentException("Max must be greater than min");
+        if (min > max) throw new IllegalArgumentException("Max must be greater than or equal min");
         return new Random().nextInt((max - min) + 1) + min;
     }
 }
