@@ -4,7 +4,10 @@
 
 This plugin allows players to randomly teleport across the world and to specific biome types.
 
-After installing this plugin and starting up and loading the worlds for the first time, the scanner will start scanning
+## Installing
+After [downloading the plugin](#download), place the jar file in the `mods` folder of the Sponge server.
+
+Upon starting up and loading the worlds for the first time after installing, the scanner will start scanning
 chunks from 0,0 outward to 10000x10000 chunks along the X and Z axes.
 
 The scanner runs asynchronously to server functions, so the server is still usable and playable while the scan is running.
@@ -16,6 +19,9 @@ finished. The scan will not restart upon starting the server in the future, unle
 (which contains the saved scanned data) is deleted.
 
 Since this runs a scan on the world, it is recommended to take a backup of the world before installing the plugin.
+
+## Download
+You can download the latest version from [Ore](https://ore.spongepowered.org/FusionDev/FxBiomeRTP)
 
 ## Commands and Permissions
 | Command    | Permission                  | Description                            |
