@@ -24,11 +24,9 @@
 
 package io.github.brendoncurmi.fxbiomertp.api;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-
-import java.util.Collection;
+import org.spongepowered.api.world.WorldBorder;
 
 public class SpiralScan {
 
@@ -37,21 +35,26 @@ public class SpiralScan {
      */
     private static final int CHUNK_SIZE = 16;
 
-    private static final int MAX_XY = 10000;
+    private static final int MAX_CHUNKS_XY = 10000;
+    private static final int MAX_BLOCKS_XY = MAX_CHUNKS_XY / CHUNK_SIZE;
 
+    private World world;
     private Runnable runnable;
 
-    public SpiralScan(Runnable runnable) {
+    public SpiralScan(World world, Runnable runnable) {
+        this.world = world;
         this.runnable = runnable;
     }
 
     /**
-     * Starts a spiral scan from origin (0, 0) for a length of {@value MAX_XY}chunks.
+     * Starts a spiral scan from origin (0, 0) for a length of up to {@value MAX_CHUNKS_XY} chunks, within world border.
      * This method handles the scan along 2 dimensions, hence why dealing with {@code X} and {@code Y}. Keep in mind that
      * replacing the Y axis with Z axis would probably be what you intend on doing if using this along 3 dimensions.
      */
     public void startScan() {
-        startScan(MAX_XY, MAX_XY, 0, 0);
+        WorldBorder border = world.getWorldBorder();
+        int xy = Math.min(MAX_BLOCKS_XY, (int) ((border.getDiameter() - 1) / (CHUNK_SIZE * 2)));
+        startScan(xy, xy, 0, 0);
     }
 
     /**
@@ -85,9 +88,6 @@ public class SpiralScan {
                 int blockX = ((x * CHUNK_SIZE) + (CHUNK_SIZE / 2)) + dX;
                 int blockY = 88;
                 int blockZ = ((y * CHUNK_SIZE) + (CHUNK_SIZE / 2)) + dY;
-                Collection<World> worlds = Sponge.getServer().getWorlds();
-                if (worlds.size() < 1) throw new RuntimeException("Cannot run scan as cannot find any worlds");
-                World world = worlds.iterator().next();
                 Location<World> blockLoc = new Location<>(world, blockX, blockY, blockZ);
                 runnable.run(blockLoc);
             }

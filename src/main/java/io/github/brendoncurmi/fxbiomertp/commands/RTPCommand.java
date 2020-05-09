@@ -33,6 +33,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.WorldBorder;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.util.Optional;
@@ -52,9 +54,11 @@ public class RTPCommand implements CommandExecutor {
             return CommandResult.empty();
         }
         Player player = target.orElseGet(() -> (Player) src);
-        int x = MathUtils.getRandomNumberInRange(0, MAX_BLOCKS);
-        int z = MathUtils.getRandomNumberInRange(0, MAX_BLOCKS);
-        TeleportHelper.teleportPlayer(player, player.getWorld(), x, z);
+        World world = player.getWorld();
+        WorldBorder border = world.getWorldBorder();
+        int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
+        int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
+        TeleportHelper.teleportPlayer(player, world, x, z);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
         return CommandResult.success();
     }
