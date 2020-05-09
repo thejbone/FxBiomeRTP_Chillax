@@ -8,7 +8,7 @@ This plugin allows players to randomly teleport across the world and to specific
 After [downloading the plugin](#download), place the jar file in the `mods` folder of the Sponge server.
 
 Upon starting up and loading the worlds for the first time after installing, the scanner will start scanning
-chunks from 0,0 outward to 10000x10000 chunks along the X and Z axes.
+chunks from 0,0 outward to 10000x10000 chunks along the X and Z axes, or up to the world border.
 
 The scanner runs asynchronously to server functions, so the server is still usable and playable while the scan is running.
 But it's recommended to leave the server idle during scanning for at least 5-20 minutes for a simple world and
@@ -19,6 +19,8 @@ finished. The scan will not restart upon starting the server in the future, unle
 (which contains the saved scanned data) is deleted.
 
 Since this runs a scan on the world, it is recommended to take a backup of the world before installing the plugin.
+
+Increasing the world border after the scan has started, will not increase the scan area.
 
 ## Download
 You can download the latest version from [Ore](https://ore.spongepowered.org/FusionDev/FxBiomeRTP)
