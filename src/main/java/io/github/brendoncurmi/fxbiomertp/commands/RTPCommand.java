@@ -57,7 +57,9 @@ public class RTPCommand implements CommandExecutor {
         World world = player.getWorld();
         WorldBorder border = world.getWorldBorder();
         int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
+        if (MathUtils.getRandomNumberInRange(0, 1) == 0) x = -x;
         int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
+        if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
         TeleportHelper.teleportPlayer(player, world, x, z);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
         return CommandResult.success();
