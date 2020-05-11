@@ -30,3 +30,10 @@ You can download the latest version from [Ore](https://ore.spongepowered.org/Fus
 |------------|-----------------------------|----------------------------------------|
 | /biomertp  | fxbiomertp.command.biomertp | Teleports the player to a random biome |
 | /rtp       | fxbiomertp.command.rtp      | Teleports the player to a random spot  |
+
+# Rescanning
+Upon first server startup since installing the plugin, a scanner will run to map out the world area.
+
+This data is serialized to `config/biomertp/biomertp.ser`
+
+To trigger a rescan, delete the `biomertp.ser` file before starting up the server.
