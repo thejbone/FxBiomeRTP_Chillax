@@ -28,6 +28,7 @@ import com.google.inject.Inject;
 import io.github.brendoncurmi.fxbiomertp.api.BiomeUtils;
 import io.github.brendoncurmi.fxbiomertp.api.FileFactory;
 import io.github.brendoncurmi.fxbiomertp.api.SpiralScan;
+import io.github.brendoncurmi.fxbiomertp.commands.elements.BiomeCommandElement;
 import io.github.brendoncurmi.fxbiomertp.commands.BiomeRTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
 import org.slf4j.Logger;
@@ -94,11 +95,13 @@ public class FxBiomeRTP extends PluginInfo {
             logger.error("Error loading '" + configDir.toString() + "' directory", ex);
         }
 
+        BiomeUtils.initBiomes();
+
         Sponge.getCommandManager().register(instance, CommandSpec.builder()
                 .description(Text.of("Teleports the player to a random biome"))
                 .permission(CMD_PERM + "biomertp")
                 .arguments(
-                        GenericArguments.string(Text.of("biome")),
+                        new BiomeCommandElement(Text.of("biome")),
                         GenericArguments.optional(GenericArguments.player(Text.of("target")))
                 )
                 .executor(new BiomeRTPCommand())
@@ -112,8 +115,6 @@ public class FxBiomeRTP extends PluginInfo {
                 )
                 .executor(new RTPCommand())
                 .build(), "rtp");
-
-        BiomeUtils.initBiomes();
     }
 
     @Listener
