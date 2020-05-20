@@ -35,9 +35,19 @@ public class BiomeUtils implements Serializable {
     private static final long serialVersionUID = 1859671383177704519L;
 
     /**
-     * Stores the biome names and biome field names.
+     * Stores the normal names-field names of the biomes as key-value pairs. Examples:
+     * <pre><code>
+     *     Taiga: taiga
+     *     Cold Taiga: cold_taiga
+     *     Taiga M: taiga_mountains
+     *     Extreme Hills+ M: extreme_hills_plus_mountains
+     * </code></pre>
      */
     private static HashMap<String, String> biomeNamesMap = new HashMap<>();
+
+    public static HashMap<String, String> getBiomeNamesMap() {
+        return biomeNamesMap;
+    }
 
     public static String getBiomeName(BiomeType biomeType) {
         return biomeNamesMap.get(biomeType.getName());
