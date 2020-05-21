@@ -48,7 +48,7 @@ public class BiomeRTPCommand implements CommandExecutor {
         }
 
         Player player = target.orElseGet(() -> (Player) src);
-        String biome = args.requireOne("biome");
+        String biome = args.requireOne("biome").toString().toLowerCase();
         if (!FxBiomeRTP.getInstance().getBiomeUtils().hasBiome(biome)) {
             player.sendMessage(Text.of(TextColors.RED, "Cannot find biome '" + biome + "'"));
             return CommandResult.empty();
