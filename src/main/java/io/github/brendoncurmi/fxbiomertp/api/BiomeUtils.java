@@ -79,10 +79,11 @@ public class BiomeUtils implements Serializable {
     }
 
     public boolean hasBiome(String biome) {
-        return scannedBiomes.containsKey(biome);
+        return scannedBiomes.containsKey(biome.toLowerCase());
     }
 
     public BiomeData getBiomeData(String biome) {
+        biome = biome.toLowerCase();
         if (!hasBiome(biome)) scannedBiomes.put(biome, new BiomeData());
         return scannedBiomes.get(biome);
     }
