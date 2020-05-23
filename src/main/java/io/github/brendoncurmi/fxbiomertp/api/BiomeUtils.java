@@ -74,6 +74,10 @@ public class BiomeUtils implements Serializable {
      */
     private HashMap<String, BiomeData> scannedBiomes = new HashMap<>();
 
+    public HashMap<String, BiomeData> getScannedBiomes() {
+        return scannedBiomes;
+    }
+
     public boolean empty() {
         return scannedBiomes.isEmpty();
     }

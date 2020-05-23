@@ -28,9 +28,11 @@ import com.google.inject.Inject;
 import io.github.brendoncurmi.fxbiomertp.api.BiomeUtils;
 import io.github.brendoncurmi.fxbiomertp.api.FileFactory;
 import io.github.brendoncurmi.fxbiomertp.api.SpiralScan;
+import io.github.brendoncurmi.fxbiomertp.commands.ScanCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.elements.BiomeCommandElement;
 import io.github.brendoncurmi.fxbiomertp.commands.BiomeRTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
+import io.github.brendoncurmi.fxbiomertp.commands.elements.WorldCommandElement;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -115,13 +117,22 @@ public class FxBiomeRTP extends PluginInfo {
                 )
                 .executor(new RTPCommand())
                 .build(), "rtp");
+
+        Sponge.getCommandManager().register(instance, CommandSpec.builder()
+                .description(Text.of("Starts scanning the world"))
+                .permission(CMD_PERM + "scan")
+                .arguments(
+                        new WorldCommandElement(Text.of("world"))
+                )
+                .executor(new ScanCommand())
+                .build(), "scan");
     }
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         Collection<World> worlds = Sponge.getServer().getWorlds();
         if (worlds.size() > 0) {
-            spiralScan = new SpiralScan(worlds.iterator().next(), location -> {
+            spiralScan = new SpiralScan(location -> {
                 biomeUtils.getBiomeData(BiomeUtils.getBiomeName(location.getBiome())).addCoord(location.getBlockX(), location.getBlockZ());
                 logger.info("Scanned " + location.getX() + "," + location.getZ());
                 try {
@@ -132,12 +143,6 @@ public class FxBiomeRTP extends PluginInfo {
                 //location.setBlockType(BlockTypes.BONE_BLOCK);
                 //System.out.println(location.getChunkPosition());
             });
-
-            if (biomeUtils.empty()) {
-                task = Task.builder().execute(() -> {
-                    getSpiralScan().startScan();
-                }).async().name("FxBiomeRTP Scanner").submit(pluginContainer);
-            }
         } else logger.error("Cannot run scan as cannot find any worlds");
     }
 
@@ -157,5 +162,13 @@ public class FxBiomeRTP extends PluginInfo {
 
     public SpiralScan getSpiralScan() {
         return spiralScan;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 }

@@ -41,9 +41,12 @@ public class SpiralScan {
     private World world;
     private Runnable runnable;
 
-    public SpiralScan(World world, Runnable runnable) {
-        this.world = world;
+    public SpiralScan(Runnable runnable) {
         this.runnable = runnable;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 
     /**
