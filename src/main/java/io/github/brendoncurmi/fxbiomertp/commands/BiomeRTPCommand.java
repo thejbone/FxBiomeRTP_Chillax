@@ -26,6 +26,7 @@ package io.github.brendoncurmi.fxbiomertp.commands;
 
 import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
 import io.github.brendoncurmi.fxbiomertp.api.TeleportHelper;
+import io.github.brendoncurmi.fxbiomertp.impl.data.WorldData;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -33,6 +34,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.World;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.util.*;
@@ -48,13 +50,19 @@ public class BiomeRTPCommand implements CommandExecutor {
         }
 
         Player player = target.orElseGet(() -> (Player) src);
+        if (!FxBiomeRTP.getInstance().getPersistenceData().hasScannedWorld(player.getWorld().getName())) {
+            src.sendMessage(Text.of(TextColors.RED, "This world has not been scanned"));
+            return CommandResult.empty();
+        }
+
+        WorldData worldData = FxBiomeRTP.getInstance().getPersistenceData().getWorldData(player.getWorld().getName());
         String biome = args.requireOne("biome").toString().toLowerCase();
-        if (!FxBiomeRTP.getInstance().getBiomeUtils().hasBiome(biome)) {
+        if (!worldData.hasBiome(biome)) {
             player.sendMessage(Text.of(TextColors.RED, "Cannot find biome '" + biome + "'"));
             return CommandResult.empty();
         }
 
-        int[] coords = FxBiomeRTP.getInstance().getBiomeUtils().getBiomeData(biome).getRandomCoord();
+        int[] coords = worldData.getBiomeData(biome).getRandomCoord();
         TeleportHelper.teleportPlayer(player, player.getWorld(), coords[0], coords[1]);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported to a(n) " + player.getLocation().getBiome().getName() + " biome!"));
         return CommandResult.success();

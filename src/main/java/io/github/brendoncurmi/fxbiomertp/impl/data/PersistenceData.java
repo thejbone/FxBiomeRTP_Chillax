@@ -22,26 +22,36 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.fxbiomertp.api;
+package io.github.brendoncurmi.fxbiomertp.impl.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
-public class BiomeData implements Serializable {
-    private static final long serialVersionUID = -7032943812492347010L;
+public class PersistenceData implements Serializable {
+    private static final long serialVersionUID = -4356793588541650937L;
+
 
     /**
-     * Lists all the spawnable coordinates for this biome type.
+     * Stores the name-object for the worlds.
      */
-    private List<int[]> coords = new ArrayList<>();
+    private HashMap<String, WorldData> scannedWorlds = new HashMap<>();
 
-    public void addCoord(int x, int y) {
-        coords.add(new int[]{x, y});
+    public boolean hasScannedWorld(String worldName) {
+        return scannedWorlds.containsKey(worldName);
     }
 
-    public int[] getRandomCoord() {
-        if (coords.size() == 0) throw new IllegalArgumentException("Coords is empty");
-        return coords.get(MathUtils.getRandomNumberInRange(0, coords.size() - 1));
+    public void createWorld(String worldName) {
+        scannedWorlds.put(worldName, new WorldData());
     }
+
+    public void removeWorld(String worldName) {
+        scannedWorlds.remove(worldName);
+    }
+
+    public WorldData getWorldData(String worldName) {
+        if (!hasScannedWorld(worldName)) createWorld(worldName);
+        return scannedWorlds.get(worldName);
+    }
+
+
 }

@@ -26,13 +26,16 @@ package io.github.brendoncurmi.fxbiomertp;
 
 import com.google.inject.Inject;
 import io.github.brendoncurmi.fxbiomertp.api.BiomeUtils;
-import io.github.brendoncurmi.fxbiomertp.api.FileFactory;
-import io.github.brendoncurmi.fxbiomertp.api.SpiralScan;
+import io.github.brendoncurmi.fxbiomertp.api.IFileFactory;
+import io.github.brendoncurmi.fxbiomertp.commands.NewScanCommand;
+import io.github.brendoncurmi.fxbiomertp.impl.FileFactory;
+import io.github.brendoncurmi.fxbiomertp.impl.SpiralScan;
 import io.github.brendoncurmi.fxbiomertp.commands.ScanCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.elements.BiomeCommandElement;
 import io.github.brendoncurmi.fxbiomertp.commands.BiomeRTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.elements.WorldCommandElement;
+import io.github.brendoncurmi.fxbiomertp.impl.data.PersistenceData;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -66,15 +69,23 @@ import java.util.Collection;
         })
 public class FxBiomeRTP extends PluginInfo {
 
+    /*
+
+    FileFactory -> DataMigrator -> WorldData -> BiomeUtils
+
+     */
+
     private static FxBiomeRTP instance;
 
     private Path configDir;
     private Logger logger;
     private PluginContainer pluginContainer;
     private File file;
-    private BiomeUtils biomeUtils;
+//    private BiomeUtils biomeUtils;
+    private PersistenceData persistenceData;
     private SpiralScan spiralScan;
     private Task task;
+    private IFileFactory fileFactory;
 
     @Inject
     public FxBiomeRTP(@ConfigDir(sharedRoot = false) Path configDir, Logger logger, PluginContainer pluginContainer) {
@@ -86,9 +97,10 @@ public class FxBiomeRTP extends PluginInfo {
 
     @Listener
     public void preInit(GamePreInitializationEvent event) throws IllegalAccessException {
-        file = Paths.get(this.configDir.toString(), ID + ".ser").toFile();
+        file = Paths.get(this.configDir.toString(), "scans.ser").toFile();
 
-        biomeUtils = file.exists() ? (BiomeUtils) FileFactory.deserialize(file.getAbsolutePath()) : new BiomeUtils();
+        fileFactory = new FileFactory();
+        persistenceData = file.exists() ? (PersistenceData) fileFactory.deserialize(file.getAbsolutePath()) : new PersistenceData();
 
         try {
             Files.createDirectories(this.configDir);
@@ -128,12 +140,20 @@ public class FxBiomeRTP extends PluginInfo {
                 .build(), "scan");
     }
 
+    private String worldName;
+
+    public void setWorldName(String worldName) {
+        this.worldName = worldName;
+    }
+
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         Collection<World> worlds = Sponge.getServer().getWorlds();
         if (worlds.size() > 0) {
             spiralScan = new SpiralScan(location -> {
-                biomeUtils.getBiomeData(BiomeUtils.getBiomeName(location.getBiome())).addCoord(location.getBlockX(), location.getBlockZ());
+                persistenceData.getWorldData(worldName)
+                        .getBiomeData(BiomeUtils.getBiomeName(location.getBiome()))
+                        .addCoord(location.getBlockX(), location.getBlockZ());
                 logger.info("Scanned " + location.getX() + "," + location.getZ());
                 try {
                     Thread.sleep(100);
@@ -149,15 +169,15 @@ public class FxBiomeRTP extends PluginInfo {
     @Listener
     public void onServerStop(GameStoppingEvent event) {
         if (task != null) task.cancel();
-        FileFactory.serialize(biomeUtils, file.getAbsolutePath());
+        fileFactory.serialize(persistenceData, file.getAbsolutePath());
     }
 
     public static FxBiomeRTP getInstance() {
         return FxBiomeRTP.instance;
     }
 
-    public BiomeUtils getBiomeUtils() {
-        return biomeUtils;
+    public PersistenceData getPersistenceData() {
+        return persistenceData;
     }
 
     public SpiralScan getSpiralScan() {

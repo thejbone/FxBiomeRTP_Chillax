@@ -25,6 +25,7 @@
 package io.github.brendoncurmi.fxbiomertp.commands;
 
 import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
+import io.github.brendoncurmi.fxbiomertp.impl.data.WorldData;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -54,8 +55,11 @@ public class ScanCommand implements CommandExecutor {
         if (inst.getTask() != null) inst.getTask().cancel();
 
         inst.getSpiralScan().setWorld(world);
+        inst.setWorldName(worldName);
 
-        if (!inst.getBiomeUtils().empty()) inst.getBiomeUtils().getScannedBiomes().clear();
+        if (FxBiomeRTP.getInstance().getPersistenceData().hasScannedWorld(worldName)) {
+            FxBiomeRTP.getInstance().getPersistenceData().removeWorld(worldName);
+        }
 
         inst.setTask(Task.builder().execute(() -> inst.getSpiralScan().startScan())
                 .async().name("FxBiomeRTP Scanner").submit(inst));

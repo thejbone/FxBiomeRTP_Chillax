@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.fxbiomertp.api;
+package io.github.brendoncurmi.fxbiomertp.impl;
 
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;

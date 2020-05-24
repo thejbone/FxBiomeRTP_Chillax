@@ -68,27 +68,4 @@ public class BiomeUtils implements Serializable {
             biomeNamesMap.put(type.getName(), name.toLowerCase());
         }
     }
-
-    /**
-     * Stores the biome type and their biome data.
-     */
-    private HashMap<String, BiomeData> scannedBiomes = new HashMap<>();
-
-    public HashMap<String, BiomeData> getScannedBiomes() {
-        return scannedBiomes;
-    }
-
-    public boolean empty() {
-        return scannedBiomes.isEmpty();
-    }
-
-    public boolean hasBiome(String biome) {
-        return scannedBiomes.containsKey(biome.toLowerCase());
-    }
-
-    public BiomeData getBiomeData(String biome) {
-        biome = biome.toLowerCase();
-        if (!hasBiome(biome)) scannedBiomes.put(biome, new BiomeData());
-        return scannedBiomes.get(biome);
-    }
 }
