@@ -27,6 +27,7 @@ package io.github.brendoncurmi.fxbiomertp;
 import com.google.inject.Inject;
 import io.github.brendoncurmi.fxbiomertp.api.BiomeUtils;
 import io.github.brendoncurmi.fxbiomertp.api.IFileFactory;
+import io.github.brendoncurmi.fxbiomertp.api.config.ConfigManager;
 import io.github.brendoncurmi.fxbiomertp.commands.ScansCommand;
 import io.github.brendoncurmi.fxbiomertp.impl.FileFactory;
 import io.github.brendoncurmi.fxbiomertp.impl.SpiralScan;
@@ -34,9 +35,12 @@ import io.github.brendoncurmi.fxbiomertp.commands.elements.BiomeCommandElement;
 import io.github.brendoncurmi.fxbiomertp.commands.BiomeRTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.elements.WorldCommandElement;
+import io.github.brendoncurmi.fxbiomertp.impl.config.Config;
 import io.github.brendoncurmi.fxbiomertp.impl.data.PersistenceData;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
@@ -56,6 +60,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Optional;
 
 @Plugin(id = FxBiomeRTP.ID,
         name = FxBiomeRTP.NAME,
@@ -76,6 +81,7 @@ public class FxBiomeRTP extends PluginInfo {
     private SpiralScan spiralScan;
     private Task task;
     private IFileFactory fileFactory;
+    private Config config;
 
     @Inject
     public FxBiomeRTP(@ConfigDir(sharedRoot = false) Path configDir, Logger logger) {
@@ -96,6 +102,29 @@ public class FxBiomeRTP extends PluginInfo {
             file.createNewFile();
         } catch (IOException ex) {
             logger.error("Error loading '" + configDir.toString() + "' directory", ex);
+        }
+
+
+        // Configs
+        try {
+            Files.createDirectories(this.configDir);
+        } catch (IOException ex) {
+            logger.error("Error loading '" + configDir.toString() + "' directory", ex);
+        }
+
+        try {
+            Path path = Paths.get(this.configDir.toString(), ID + ".conf");
+
+            if (!Files.exists(path)) {
+                Optional<Asset> asset = Sponge.getAssetManager().getAsset(this, "default.conf");
+                if (asset.isPresent()) asset.get().copyToFile(path);
+            }
+
+            // Load main config
+            ConfigManager configManager = new ConfigManager(path);
+            config = configManager.getNode().getValue(Config.type);
+        } catch (IOException | ObjectMappingException ex) {
+            logger.error("Config file could not be loaded", ex);
         }
 
         BiomeUtils.initBiomes();
@@ -184,5 +213,9 @@ public class FxBiomeRTP extends PluginInfo {
 
     public void setTask(Task task) {
         this.task = task;
+    }
+
+    public Config getConfig() {
+        return config;
     }
 }
