@@ -38,10 +38,6 @@ public class BiomeData implements Serializable {
      */
     private List<int[]> coords = new ArrayList<>();
 
-    public void setCoords(List<int[]> coords) {
-        this.coords = coords;
-    }
-
     public void addCoord(int x, int y) {
         coords.add(new int[]{x, y});
     }

@@ -35,18 +35,6 @@ public class WorldData implements Serializable {
      */
     private HashMap<String, BiomeData> scannedBiomes = new HashMap<>();
 
-    public HashMap<String, BiomeData> getScannedBiomes() {
-        return scannedBiomes;
-    }
-
-    public void setScannedBiomes(HashMap<String, BiomeData> scannedBiomes) {
-        this.scannedBiomes = scannedBiomes;
-    }
-
-    public boolean empty() {
-        return scannedBiomes.isEmpty();
-    }
-
     public boolean hasBiome(String biome) {
         return scannedBiomes.containsKey(biome.toLowerCase());
     }
