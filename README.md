@@ -8,7 +8,7 @@ This plugin allows players to randomly teleport across the world and to specific
 After [downloading the plugin](#download), place the jar file in the `mods` folder of the Sponge server.
 
 ## Scanning
-To be able to teleport to biomes, the program will need to run a scan of the available world.
+To be able to teleport to biomes, the plugin will need to run a scan of the available world.
 
 Running `/scans scan <world>` will start a scan of the specified world.
 
@@ -16,7 +16,7 @@ The scanner will start scanning chunks from 0,0 outward to 10000x10000 chunks al
 world border. It is recommended to have set a world border limit prior to starting the scan.
 
 The scanner runs asynchronously to server functions, so the server is still usable and playable while the scan is running.
-It is recommended to wait until the scan has completely before shutting down the server, as this may corrupt the saved data.
+It is recommended to wait until the scan has completed before shutting down the server, as this may corrupt the saved data.
 
 Increasing the world border after the scan has started, will not increase the scan area, unless another scan is taken.
 
