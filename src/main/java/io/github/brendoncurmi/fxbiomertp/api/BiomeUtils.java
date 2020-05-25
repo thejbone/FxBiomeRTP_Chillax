@@ -27,12 +27,10 @@ package io.github.brendoncurmi.fxbiomertp.api;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class BiomeUtils implements Serializable {
-    private static final long serialVersionUID = 1859671383177704519L;
+public class BiomeUtils {
 
     /**
      * Stores the normal names-field names of the biomes as key-value pairs. Examples:
