@@ -25,8 +25,12 @@
 package io.github.brendoncurmi.fxbiomertp.commands;
 
 import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
+import io.github.brendoncurmi.fxbiomertp.PluginInfo;
+import io.github.brendoncurmi.fxbiomertp.api.ICooldown;
 import io.github.brendoncurmi.fxbiomertp.api.TeleportHelper;
+import io.github.brendoncurmi.fxbiomertp.impl.Cooldown;
 import io.github.brendoncurmi.fxbiomertp.impl.data.WorldData;
+import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -40,8 +44,11 @@ import java.util.*;
 
 @NonnullByDefault
 public class BiomeRTPCommand implements CommandExecutor {
+
+    private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getBiomeRtpCooldown());
+
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) {
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         Optional<Player> target = args.getOne("target");
         if (!(src instanceof Player) && !target.isPresent()) {
             src.sendMessage(Text.of(TextColors.RED, "Using the command from this source requires specifying a target"));
@@ -49,6 +56,13 @@ public class BiomeRTPCommand implements CommandExecutor {
         }
 
         Player player = target.orElseGet(() -> (Player) src);
+
+        if (FxBiomeRTP.getInstance().getConfig().getBiomeRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "biomertp")) {
+            if (!COOLDOWN.isValid(player))
+                throw new CommandException(Text.of(TextColors.RED, "You can only use this command every " + COOLDOWN.getDelay() + "s"));
+            COOLDOWN.addPlayer(player);
+        }
+
         if (!FxBiomeRTP.getInstance().getPersistenceData().hasScannedWorld(player.getWorld().getName())) {
             src.sendMessage(Text.of(TextColors.RED, "This world has not been scanned"));
             return CommandResult.empty();

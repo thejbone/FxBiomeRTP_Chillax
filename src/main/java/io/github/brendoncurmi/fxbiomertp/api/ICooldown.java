@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.fxbiomertp;
+package io.github.brendoncurmi.fxbiomertp.api;
 
-public class PluginInfo {
-    public static final String ID = "fxbiomertp";
-    public static final String NAME = "FxBiomeRTP";
-    public static final String VERSION = "1.2";
-    public static final String DESCRIPTION = "This plugin allows players to randomly teleport across the world and to specific biome types.";
+import org.spongepowered.api.entity.living.player.Player;
 
-    public static final String CMD_PERM = ID + ".command.";
-    public static final String COOLDOWN_PERM = ID + ".cooldown.";
+public interface ICooldown {
+    void addPlayer(Player player);
+
+    boolean isValid(Player player);
+
+    int getDelay();
 }

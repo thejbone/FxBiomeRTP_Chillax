@@ -24,8 +24,13 @@
 
 package io.github.brendoncurmi.fxbiomertp.commands;
 
+import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
+import io.github.brendoncurmi.fxbiomertp.PluginInfo;
+import io.github.brendoncurmi.fxbiomertp.api.ICooldown;
 import io.github.brendoncurmi.fxbiomertp.api.MathUtils;
 import io.github.brendoncurmi.fxbiomertp.api.TeleportHelper;
+import io.github.brendoncurmi.fxbiomertp.impl.Cooldown;
+import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -46,14 +51,23 @@ public class RTPCommand implements CommandExecutor {
      */
     private static final int MAX_BLOCKS = 1000000;
 
+    private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getRtpCooldown());
+
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) {
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         Optional<Player> target = args.getOne("target");
         if (!(src instanceof Player) && !target.isPresent()) {
             src.sendMessage(Text.of(TextColors.RED, "Using the command from this source requires specifying a target"));
             return CommandResult.empty();
         }
         Player player = target.orElseGet(() -> (Player) src);
+
+        if (FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
+            if (!COOLDOWN.isValid(player))
+                throw new CommandException(Text.of(TextColors.RED, "You can only use this command every " + COOLDOWN.getDelay() + "s"));
+            COOLDOWN.addPlayer(player);
+        }
+
         World world = player.getWorld();
         WorldBorder border = world.getWorldBorder();
         int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
