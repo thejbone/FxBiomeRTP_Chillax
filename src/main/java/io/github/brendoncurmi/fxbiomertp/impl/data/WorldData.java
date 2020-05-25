@@ -24,14 +24,11 @@
 
 package io.github.brendoncurmi.fxbiomertp.impl.data;
 
-import io.github.brendoncurmi.fxbiomertp.impl.data.BiomeData;
-
 import java.io.Serializable;
 import java.util.HashMap;
 
 public class WorldData implements Serializable {
     private static final long serialVersionUID = 7690517287644795439L;
-
 
     /**
      * Stores the biome type and their biome data.

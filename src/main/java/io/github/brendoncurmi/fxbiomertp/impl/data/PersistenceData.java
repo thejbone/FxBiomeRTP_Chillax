@@ -30,11 +30,14 @@ import java.util.HashMap;
 public class PersistenceData implements Serializable {
     private static final long serialVersionUID = -4356793588541650937L;
 
-
     /**
      * Stores the name-object for the worlds.
      */
     private HashMap<String, WorldData> scannedWorlds = new HashMap<>();
+
+    public HashMap<String, WorldData> getScannedWorlds() {
+        return scannedWorlds;
+    }
 
     public boolean hasScannedWorld(String worldName) {
         return scannedWorlds.containsKey(worldName);
@@ -52,6 +55,4 @@ public class PersistenceData implements Serializable {
         if (!hasScannedWorld(worldName)) createWorld(worldName);
         return scannedWorlds.get(worldName);
     }
-
-
 }

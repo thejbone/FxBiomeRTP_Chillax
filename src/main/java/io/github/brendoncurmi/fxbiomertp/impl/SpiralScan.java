@@ -24,6 +24,8 @@
 
 package io.github.brendoncurmi.fxbiomertp.impl;
 
+import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
+import io.github.brendoncurmi.fxbiomertp.api.BiomeUtils;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldBorder;
@@ -41,8 +43,21 @@ public class SpiralScan {
     private World world;
     private Runnable runnable;
 
-    public SpiralScan(Runnable runnable) {
-        this.runnable = runnable;
+    public SpiralScan() {
+        runnable = location -> {
+            FxBiomeRTP inst = FxBiomeRTP.getInstance();
+            inst.getPersistenceData().getWorldData(world.getName())
+                    .getBiomeData(BiomeUtils.getBiomeName(location.getBiome()))
+                    .addCoord(location.getBlockX(), location.getBlockZ());
+            inst.getLogger().info("Scanned " + location.getX() + "," + location.getZ());
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            //location.setBlockType(BlockTypes.BONE_BLOCK);
+            //System.out.println(location.getChunkPosition());
+        };
     }
 
     public void setWorld(World world) {

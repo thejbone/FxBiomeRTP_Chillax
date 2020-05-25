@@ -25,11 +25,8 @@
 package io.github.brendoncurmi.fxbiomertp.impl;
 
 import io.github.brendoncurmi.fxbiomertp.api.IFileFactory;
-import io.github.brendoncurmi.fxbiomertp.impl.data.PersistenceData;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * This factory handles the serialization and deserialization of serializable objects.
