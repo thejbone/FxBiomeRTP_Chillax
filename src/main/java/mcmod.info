@@ -4,7 +4,7 @@
         "name": "FxBiomeRTP",
         "description": "This plugin allows players to randomly teleport across the world and to specific biome types",
         "authorList": ["FusionDev"],
-        "version": "1.1",
+        "version": "1.2",
         "mcversion": "1.12.2",
         "url": "https://ore.spongepowered.org/FusionDev/FxBiomeRTP",
         "sourceUrl": "https://github.com/BrendonCurmi/FxBiomeRTP",
