@@ -22,14 +22,32 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.fxbiomertp;
+package io.github.brendoncurmi.fxbiomertp.impl.config;
 
-public class PluginInfo {
-    public static final String ID = "fxbiomertp";
-    public static final String NAME = "FxBiomeRTP";
-    public static final String VERSION = "1.2";
-    public static final String DESCRIPTION = "This plugin allows players to randomly teleport across the world and to specific biome types.";
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-    public static final String CMD_PERM = ID + ".command.";
-    public static final String COOLDOWN_PERM = ID + ".cooldown.";
+@ConfigSerializable
+public class Config extends AbstractConfig {
+    @SuppressWarnings("UnstableApiUsage")
+    public final static TypeToken<Config> type = TypeToken.of(Config.class);
+
+    @Inject
+    @Setting("rtp-cooldown")
+    private int rtpCooldown = 0;
+    @Inject
+    @Setting("biomertp-cooldown")
+    private int biomeRtpCooldown = 0;
+
+    @Override
+    public int getRtpCooldown() {
+        return rtpCooldown;
+    }
+
+    @Override
+    public int getBiomeRtpCooldown() {
+        return biomeRtpCooldown;
+    }
 }

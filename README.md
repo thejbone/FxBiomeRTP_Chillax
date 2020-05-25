@@ -33,6 +33,19 @@ You can download the latest version from [Ore](https://ore.spongepowered.org/Fus
 | /scans scan   | fxbiomertp.command.scans.scan   | Scans the specified world                |
 | /scans remove | fxbiomertp.command.scans.remove | Removes the scan for the specified world |
 
+## Config
+The config file is saved to `config/fxbiomertp/fxbiomertp.conf`
+
+You can configure cooldowns for the below commands.
+If the player has the below permissions, they will skip the cooldown.
+
+| Command   | Permission                   |
+|-----------|------------------------------|
+| /biomertp | fxbiomertp.cooldown.biomertp |
+| /rtp      | fxbiomertp.cooldown.rtp      |
+
+To disable a cooldown entirely, just set the config value to 0.
+
 ## Rescanning
 To rescan a world, simple run `/scans scan <world>` for the world.
 

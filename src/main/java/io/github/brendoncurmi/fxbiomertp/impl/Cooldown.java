@@ -22,14 +22,39 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.fxbiomertp;
+package io.github.brendoncurmi.fxbiomertp.impl;
 
-public class PluginInfo {
-    public static final String ID = "fxbiomertp";
-    public static final String NAME = "FxBiomeRTP";
-    public static final String VERSION = "1.2";
-    public static final String DESCRIPTION = "This plugin allows players to randomly teleport across the world and to specific biome types.";
+import io.github.brendoncurmi.fxbiomertp.api.ICooldown;
+import org.spongepowered.api.entity.living.player.Player;
 
-    public static final String CMD_PERM = ID + ".command.";
-    public static final String COOLDOWN_PERM = ID + ".cooldown.";
+import java.util.HashMap;
+
+public class Cooldown implements ICooldown {
+
+    private HashMap<Player, Long> cache;
+    private int delay;
+
+    public Cooldown(int delay) {
+        this.delay = delay;
+        this.cache = new HashMap<>();
+    }
+
+    @Override
+    public void addPlayer(Player player) {
+        cache.put(player, now() + delay);
+    }
+
+    @Override
+    public boolean isValid(Player player) {
+        return !cache.containsKey(player) || cache.get(player) < now();
+    }
+
+    @Override
+    public int getDelay() {
+        return delay;
+    }
+
+    private long now() {
+        return System.currentTimeMillis() / 1000L;
+    }
 }
