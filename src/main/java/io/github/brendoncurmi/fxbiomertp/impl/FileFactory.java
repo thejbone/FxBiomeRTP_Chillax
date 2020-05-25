@@ -22,14 +22,16 @@
  * SOFTWARE.
  */
 
-package io.github.brendoncurmi.fxbiomertp.api;
+package io.github.brendoncurmi.fxbiomertp.impl;
+
+import io.github.brendoncurmi.fxbiomertp.api.IFileFactory;
 
 import java.io.*;
 
 /**
  * This factory handles the serialization and deserialization of serializable objects.
  */
-public class FileFactory {
+public class FileFactory implements IFileFactory {
 
     /**
      * Serializes the specified serializable object to the specified file.
@@ -37,7 +39,8 @@ public class FileFactory {
      * @param serializable the object to serialize.
      * @param path         the path to write the file to.
      */
-    public static void serialize(Serializable serializable, String path) {
+    @Override
+    public void serialize(Serializable serializable, String path) {
         try {
             FileOutputStream outputStream = new FileOutputStream(path);
             ObjectOutputStream out = new ObjectOutputStream(outputStream);
@@ -55,7 +58,8 @@ public class FileFactory {
      * @param path the path to read the file from.
      * @return the deserialized data object.
      */
-    public static Serializable deserialize(String path) {
+    @Override
+    public Serializable deserialize(String path) {
         Serializable serializable = null;
         try {
             FileInputStream inputStream = new FileInputStream(path);

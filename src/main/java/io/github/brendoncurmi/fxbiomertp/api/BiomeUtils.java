@@ -27,12 +27,10 @@ package io.github.brendoncurmi.fxbiomertp.api;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class BiomeUtils implements Serializable {
-    private static final long serialVersionUID = 1859671383177704519L;
+public class BiomeUtils {
 
     /**
      * Stores the normal names-field names of the biomes as key-value pairs. Examples:
@@ -67,28 +65,5 @@ public class BiomeUtils implements Serializable {
             BiomeType type = (BiomeType) field.get(null);
             biomeNamesMap.put(type.getName(), name.toLowerCase());
         }
-    }
-
-    /**
-     * Stores the biome type and their biome data.
-     */
-    private HashMap<String, BiomeData> scannedBiomes = new HashMap<>();
-
-    public HashMap<String, BiomeData> getScannedBiomes() {
-        return scannedBiomes;
-    }
-
-    public boolean empty() {
-        return scannedBiomes.isEmpty();
-    }
-
-    public boolean hasBiome(String biome) {
-        return scannedBiomes.containsKey(biome.toLowerCase());
-    }
-
-    public BiomeData getBiomeData(String biome) {
-        biome = biome.toLowerCase();
-        if (!hasBiome(biome)) scannedBiomes.put(biome, new BiomeData());
-        return scannedBiomes.get(biome);
     }
 }
