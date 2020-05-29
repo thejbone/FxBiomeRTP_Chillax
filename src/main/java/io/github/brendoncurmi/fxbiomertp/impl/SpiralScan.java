@@ -47,7 +47,8 @@ public class SpiralScan {
         FxBiomeRTP inst = FxBiomeRTP.getInstance();
         runnable = location -> {
             // If biome isn't on the list (usually because it's modded), then add it
-            if (!BiomeUtils.contains(location.getBiome())) BiomeUtils.add(location.getBiome());
+            if (!BiomeUtils.contains(location.getBiome()))
+                BiomeUtils.add(location.getBiome());
 
             inst.getPersistenceData().getWorldData(world.getName())
                     .getBiomeData(BiomeUtils.getBiomeName(location.getBiome()))
