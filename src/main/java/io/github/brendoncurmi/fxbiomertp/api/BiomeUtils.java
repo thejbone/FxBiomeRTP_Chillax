@@ -51,6 +51,18 @@ public class BiomeUtils {
         return biomeNamesMap.get(biomeType.getName());
     }
 
+    public static void add(BiomeType biomeType) {
+        biomeNamesMap.put(biomeType.getName(), fix(biomeType.getName()));
+    }
+
+    public static boolean contains(BiomeType biomeType) {
+        return biomeNamesMap.containsKey(fix(biomeType.getName()));
+    }
+
+    private static String fix(String s) {
+        return s.replace(" ", "_");
+    }
+
     /**
      * Initializes the biome map.
      *

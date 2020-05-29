@@ -44,12 +44,17 @@ public class SpiralScan {
     private Runnable runnable;
 
     public SpiralScan() {
+        FxBiomeRTP inst = FxBiomeRTP.getInstance();
         runnable = location -> {
-            FxBiomeRTP inst = FxBiomeRTP.getInstance();
+            // If biome isn't on the list (usually because it's modded), then add it
+            if (!BiomeUtils.contains(location.getBiome())) BiomeUtils.add(location.getBiome());
+
             inst.getPersistenceData().getWorldData(world.getName())
                     .getBiomeData(BiomeUtils.getBiomeName(location.getBiome()))
                     .addCoord(location.getBlockX(), location.getBlockZ());
             inst.getLogger().info("Scanned " + location.getX() + "," + location.getZ());
+
+            // 100ms delay between cycles for slowing down execution to not use up too many resources
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ex) {

@@ -97,6 +97,9 @@ public class ScansCommand {
             if (world == null)
                 throw new CommandException(Text.of(TextColors.RED, "Cannot find world '" + worldName + "'"));
 
+            if (!FxBiomeRTP.getInstance().getPersistenceData().hasScannedWorld(worldName))
+                throw new CommandException(Text.of(TextColors.RED, "Cannot remove scans for unscanned world '" + worldName + "'"));
+
             FxBiomeRTP.getInstance().getPersistenceData().removeWorld(worldName);
             src.sendMessage(Text.of(TextColors.GREEN, "Scans for world '" + worldName + "' have been removed"));
             return CommandResult.success();
