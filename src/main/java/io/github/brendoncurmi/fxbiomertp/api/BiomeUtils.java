@@ -56,7 +56,7 @@ public class BiomeUtils {
     }
 
     public static boolean contains(BiomeType biomeType) {
-        return biomeNamesMap.containsKey(fix(biomeType.getName()));
+        return biomeNamesMap.containsKey(biomeType.getName());
     }
 
     private static String fix(String s) {
