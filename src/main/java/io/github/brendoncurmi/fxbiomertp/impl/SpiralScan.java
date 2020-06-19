@@ -37,7 +37,7 @@ public class SpiralScan {
      */
     private static final int CHUNK_SIZE = 16;
 
-    private static final int MAX_CHUNKS_XY = 10000;
+    private static final int MAX_CHUNKS_XY = 1000;
     private static final int MAX_BLOCKS_XY = MAX_CHUNKS_XY * CHUNK_SIZE;
 
     private World world;
@@ -71,7 +71,7 @@ public class SpiralScan {
     }
 
     /**
-     * Starts a spiral scan from origin (0, 0) for a length of up to {@value MAX_CHUNKS_XY} chunks, within world border.
+     * Starts a spiral scan from origin (0, 0) for a length of up to {@value MAX_CHUNKS_XY} chunks, within the world border.
      * This method handles the scan along 2 dimensions, hence why dealing with {@code X} and {@code Y}. Keep in mind that
      * replacing the Y axis with Z axis would probably be what you intend on doing if using this along 3 dimensions.
      */
