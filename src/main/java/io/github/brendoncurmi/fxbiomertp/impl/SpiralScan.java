@@ -77,7 +77,7 @@ public class SpiralScan {
      */
     public void startScan() {
         WorldBorder border = world.getWorldBorder();
-        int xy = Math.min(MAX_BLOCKS_XY, (int) ((border.getDiameter() - 1) / (CHUNK_SIZE * 2)));
+        int xy = Math.min(MAX_BLOCKS_XY, (int) ((border.getDiameter() - 1) / 2));
         startScan(xy, xy, 0, 0);
     }
 
