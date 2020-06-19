@@ -38,7 +38,7 @@ public class SpiralScan {
     private static final int CHUNK_SIZE = 16;
 
     private static final int MAX_CHUNKS_XY = 10000;
-    private static final int MAX_BLOCKS_XY = MAX_CHUNKS_XY / CHUNK_SIZE;
+    private static final int MAX_BLOCKS_XY = MAX_CHUNKS_XY * CHUNK_SIZE;
 
     private World world;
     private Runnable runnable;
