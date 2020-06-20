@@ -12,8 +12,8 @@ To be able to teleport to biomes, the plugin will need to run a scan of the avai
 
 Running `/scans scan <world>` will start a scan of the specified world.
 
-The scanner will start scanning chunks from 0,0 outward to 10000x10000 chunks along the X and Z axes, or up to the
-world border. It is recommended to have set a world border limit prior to starting the scan.
+The scanner will start scanning chunks from origin (0,0) outward to 1000x1000 chunks along the X and Z axes, or up to the
+world border. Hence, it is recommended to have set a world border limit prior to starting the scan.
 
 The scanner runs asynchronously to server functions, so the server is still usable and playable while the scan is running.
 It is recommended to wait until the scan has completed before shutting down the server, as this may corrupt the saved data.
