@@ -84,7 +84,9 @@ public class SpiralScan {
      */
     public void startScan() {
         WorldBorder border = world.getWorldBorder();
-        int xy = Math.min(MAX_BLOCKS_XY, (int) ((border.getDiameter() - 1) / 2));
+        int xy = Math.min(MAX_BLOCKS_XY, (int) border.getDiameter()) / CHUNK_SIZE;
+        xy -= 2;// Remove 2 chunks to have enough distance from the world border
+        if (xy < 0) xy = 0;
         startScan(xy, xy, 0, 0);
     }
 
