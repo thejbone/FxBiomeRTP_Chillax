@@ -27,7 +27,6 @@ package io.github.brendoncurmi.fxbiomertp.commands;
 import io.github.brendoncurmi.fxbiomertp.FxBiomeRTP;
 import io.github.brendoncurmi.fxbiomertp.PluginInfo;
 import io.github.brendoncurmi.fxbiomertp.api.ICooldown;
-import io.github.brendoncurmi.fxbiomertp.api.TeleportHelper;
 import io.github.brendoncurmi.fxbiomertp.impl.Cooldown;
 import io.github.brendoncurmi.fxbiomertp.impl.data.WorldData;
 import org.spongepowered.api.command.CommandException;
@@ -38,7 +37,11 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.TeleportHelper;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.*;
 
@@ -76,7 +79,10 @@ public class BiomeRTPCommand implements CommandExecutor {
         }
 
         int[] coords = worldData.getBiomeData(biome).getRandomCoord();
-        TeleportHelper.teleportPlayer(player, player.getWorld(), coords[0], coords[1]);
+		Location<World> worldloc = new Location<>(player.getWorld(), coords[0], 60, coords[1]);
+		Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldloc, 10, 5);
+		Location<World> targetloc = optionalTargetLoc.get();
+		player.setLocation(targetloc);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported to a(n) " + player.getLocation().getBiome().getName() + " biome!"));
         return CommandResult.success();
     }
