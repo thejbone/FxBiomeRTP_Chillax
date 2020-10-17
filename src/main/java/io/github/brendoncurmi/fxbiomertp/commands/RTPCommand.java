@@ -76,7 +76,7 @@ public class RTPCommand implements CommandExecutor {
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) x = -x;
         int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
-		Location<World> worldloc = new Location<>(world, x, 60, z);
+		Location<World> worldloc = new Location<>(world, x, 80, z);
 		Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldloc, 10, 5);
 		Location<World> targetloc = optionalTargetLoc.get();
 		player.setLocation(targetloc);
