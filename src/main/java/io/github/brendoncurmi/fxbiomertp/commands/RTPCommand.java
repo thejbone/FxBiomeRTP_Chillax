@@ -78,9 +78,11 @@ public class RTPCommand implements CommandExecutor {
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
 		Location<World> worldloc = new Location<>(world, x, 90, z);
 		Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldloc, 30, 5);
-		Location<World> targetloc = optionalTargetLoc.get();
-		player.setLocation(targetloc);
-        player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
+        if (optionalTargetLoc.isPresent()) {
+            Location<World> targetloc = optionalTargetLoc.get();
+            player.setLocation(targetloc);
+            player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
+        }
         return CommandResult.success();
     }
 }

@@ -81,9 +81,11 @@ public class BiomeRTPCommand implements CommandExecutor {
         int[] coords = worldData.getBiomeData(biome).getRandomCoord();
 		Location<World> worldloc = new Location<>(player.getWorld(), coords[0], 90, coords[1]);
 		Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldloc, 30, 5);
-		Location<World> targetloc = optionalTargetLoc.get();
-		player.setLocation(targetloc);
-        player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported to a(n) " + player.getLocation().getBiome().getName() + " biome!"));
+        if (optionalTargetLoc.isPresent()) {
+            Location<World> targetloc = optionalTargetLoc.get();
+            player.setLocation(targetloc);
+            player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported to a(n) " + player.getLocation().getBiome().getName() + " biome!"));
+        }
         return CommandResult.success();
     }
 }
