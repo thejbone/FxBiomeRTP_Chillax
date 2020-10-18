@@ -37,7 +37,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 import org.spongepowered.api.world.Location;

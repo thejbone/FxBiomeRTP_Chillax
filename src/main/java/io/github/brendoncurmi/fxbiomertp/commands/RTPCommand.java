@@ -40,7 +40,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldBorder;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
-import org.spongepowered.api.world.TeleportHelper;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 
