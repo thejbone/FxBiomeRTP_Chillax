@@ -27,9 +27,10 @@ package io.github.brendoncurmi.fxbiomertp;
 public class PluginInfo {
     public static final String ID = "fxbiomertp";
     public static final String NAME = "FxBiomeRTP";
-    public static final String VERSION = "1.5";
+    public static final String VERSION = "1.6";
     public static final String DESCRIPTION = "This plugin allows players to randomly teleport across the world and to specific biome types.";
 
     public static final String CMD_PERM = ID + ".command.";
     public static final String COOLDOWN_PERM = ID + ".cooldown.";
+    public static final String ADMIN_PERM = CMD_PERM + "admin.";
 }

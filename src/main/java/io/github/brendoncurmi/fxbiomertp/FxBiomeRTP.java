@@ -134,7 +134,7 @@ public class FxBiomeRTP extends PluginInfo {
                 .description(Text.of("Teleports the player to a random biome"))
                 .arguments(
                         new BiomeCommandElement(Text.of("biome")),
-                        GenericArguments.optional(GenericArguments.player(Text.of("target")))
+                        GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.player(Text.of("target")), ADMIN_PERM + "biomertp"))
                 )
                 .executor(new BiomeRTPCommand())
                 .build(), "biomertp");
@@ -143,7 +143,7 @@ public class FxBiomeRTP extends PluginInfo {
                 .permission(CMD_PERM + "rtp")
                 .description(Text.of("Teleports the player to a random location"))
                 .arguments(
-                        GenericArguments.optional(GenericArguments.player(Text.of("target")))
+                        GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.player(Text.of("target")), ADMIN_PERM + "rtp"))
                 )
                 .executor(new RTPCommand())
                 .build(), "rtp");

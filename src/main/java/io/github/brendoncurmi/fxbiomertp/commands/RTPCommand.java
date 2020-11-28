@@ -63,10 +63,13 @@ public class RTPCommand implements CommandExecutor {
         }
         Player player = target.orElseGet(() -> (Player) src);
 
-        if (FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
-            if (!COOLDOWN.isValid(player))
+        if (src instanceof Player
+                && FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
+                && !src.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
+            if (!COOLDOWN.isValid((Player) src)) {
                 throw new CommandException(Text.of(TextColors.RED, "You can only use this command every " + COOLDOWN.getDelay() + "s"));
-            COOLDOWN.addPlayer(player);
+            }
+            COOLDOWN.addPlayer((Player) src);
         }
 
         World world = player.getWorld();
@@ -75,12 +78,15 @@ public class RTPCommand implements CommandExecutor {
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) x = -x;
         int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
-		Location<World> worldloc = new Location<>(world, x, 90, z);
-		Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldloc, 30, 5);
+        Location<World> worldLoc = new Location<>(world, x, 90, z);
+        Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldLoc, 30, 5);
         if (optionalTargetLoc.isPresent()) {
-            Location<World> targetloc = optionalTargetLoc.get();
-            player.setLocation(targetloc);
+            Location<World> targetLoc = optionalTargetLoc.get();
+            player.setLocation(targetLoc);
             player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
+            if (target.isPresent() && (!(src instanceof Player) || ((Player) src).getUniqueId() != target.get().getUniqueId())) {
+                src.sendMessage(Text.of(TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
+            }
         }
         return CommandResult.success();
     }

@@ -24,14 +24,16 @@ Increasing the world border after the scan has started, will not increase the sc
 You can download the latest version from [Ore](https://ore.spongepowered.org/FusionDev/FxBiomeRTP)
 
 ## Commands and Permissions
-| Command       | Permission                      | Description                              |
-|---------------|---------------------------------|------------------------------------------|
-| /biomertp     | fxbiomertp.command.biomertp     | Teleports the player to a random biome   |
-| /rtp          | fxbiomertp.command.rtp          | Teleports the player to a random spot    |
-| /scans        | fxbiomertp.command.scans        | Handles the world scans                  |
-| /scans list   | fxbiomertp.command.scans.list   | Lists the scanned worlds                 |
-| /scans scan   | fxbiomertp.command.scans.scan   | Scans the specified world                |
-| /scans remove | fxbiomertp.command.scans.remove | Removes the scan for the specified world |
+| Command                       | Permission                        | Description                              |
+|-------------------------------|-----------------------------------|------------------------------------------|
+| /biomertp (biome)             | fxbiomertp.command.biomertp       | Teleports the player to a random biome   |
+| /biomertp (biome) (player)    | fxbiomertp.command.admin.biomertp | Teleports the player to a random biome   |
+| /rtp                          | fxbiomertp.command.rtp            | Teleports the player to a random spot    |
+| /rtp (player)                 | fxbiomertp.command.admin.rtp      | Teleports the player to a random spot    |
+| /scans                        | fxbiomertp.command.scans          | Handles the world scans                  |
+| /scans list                   | fxbiomertp.command.scans.list     | Lists the scanned worlds                 |
+| /scans scan                   | fxbiomertp.command.scans.scan     | Scans the specified world                |
+| /scans remove                 | fxbiomertp.command.scans.remove   | Removes the scan for the specified world |
 
 ## Config
 The config file is saved to `config/fxbiomertp/fxbiomertp.conf`
