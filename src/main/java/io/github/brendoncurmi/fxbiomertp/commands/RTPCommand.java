@@ -62,10 +62,13 @@ public class RTPCommand implements CommandExecutor {
         }
         Player player = target.orElseGet(() -> (Player) src);
 
-        if (FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
-            if (!COOLDOWN.isValid(player))
+        if (src instanceof Player
+                && FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
+                && !src.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
+            if (!COOLDOWN.isValid((Player) src)) {
                 throw new CommandException(Text.of(TextColors.RED, "You can only use this command every " + COOLDOWN.getDelay() + "s"));
-            COOLDOWN.addPlayer(player);
+            }
+            COOLDOWN.addPlayer((Player) src);
         }
 
         World world = player.getWorld();
