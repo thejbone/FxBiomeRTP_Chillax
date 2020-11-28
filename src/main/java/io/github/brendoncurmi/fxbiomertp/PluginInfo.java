@@ -32,5 +32,5 @@ public class PluginInfo {
 
     public static final String CMD_PERM = ID + ".command.";
     public static final String COOLDOWN_PERM = ID + ".cooldown.";
-    public static final String ADMIN_PERM = ID + ".admin.";
+    public static final String ADMIN_PERM = CMD_PERM + "admin.";
 }
