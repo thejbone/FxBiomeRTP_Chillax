@@ -79,6 +79,9 @@ public class RTPCommand implements CommandExecutor {
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
         TeleportHelper.teleportPlayer(player, world, x, z);
         player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
+        if (target.isPresent() && (!(src instanceof Player) || ((Player) src).getUniqueId() != target.get().getUniqueId())) {
+            src.sendMessage(Text.of(TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
+        }
         return CommandResult.success();
     }
 }
