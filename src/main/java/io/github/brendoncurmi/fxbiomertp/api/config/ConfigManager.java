@@ -48,8 +48,6 @@ public class ConfigManager extends AbstractConfigManager<CommentedConfigurationN
 
     @Override
     protected void configUpdater(int newVersion) throws IOException {
-        // Backwards compatibility to remove 1.8 "currency" field
-        getNode().getNode("pokedesigner").removeChild("currency");
         super.configUpdater(newVersion);
     }
 }
