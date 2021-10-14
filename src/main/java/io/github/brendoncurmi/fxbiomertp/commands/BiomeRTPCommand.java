@@ -48,42 +48,46 @@ import java.util.*;
 public class BiomeRTPCommand implements CommandExecutor {
 
     private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getBiomeRtpCooldown());
+    private static final Text PREFIX = Text.of(TextColors.GOLD,"[",TextColors.GREEN,"RTP",TextColors.GOLD,"] ");
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         Optional<Player> target = args.getOne("target");
+        World world = Sponge.getServer().getWorld("world").get();
         if (!(src instanceof Player) && !target.isPresent()) {
-            src.sendMessage(Text.of(TextColors.RED, "Using the command from this source requires specifying a target"));
+            src.sendMessage(Text.of(PREFIX, TextColors.RED, "Using the command from this source requires specifying a target"));
             return CommandResult.empty();
         }
 
         Player player = target.orElseGet(() -> (Player) src);
 
-        if (FxBiomeRTP.getInstance().getConfig().getBiomeRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "biomertp")) {
-            if (!COOLDOWN.isValid(player))
-                throw new CommandException(Text.of(TextColors.RED, "You can only use this command every " + COOLDOWN.getDelay() + "s"));
-            COOLDOWN.addPlayer(player);
+        if (FxBiomeRTP.getInstance().getConfig().getBiomeRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "biomertp")
+                && !COOLDOWN.isValid(player)) {
+            throw new CommandException(Text.of(PREFIX, TextColors.RED, "You can run this command again in " + COOLDOWN.getPlayerDelayFormatted((Player) src)));
         }
 
-        if (!FxBiomeRTP.getInstance().getPersistenceData().hasScannedWorld(player.getWorld().getName())) {
-            src.sendMessage(Text.of(TextColors.RED, "This world has not been scanned"));
+        if (!FxBiomeRTP.getInstance().getPersistenceData().hasScannedWorld(world.getName())) {
+            src.sendMessage(Text.of(PREFIX, TextColors.RED, "This world has not been scanned"));
             return CommandResult.empty();
         }
 
-        WorldData worldData = FxBiomeRTP.getInstance().getPersistenceData().getWorldData(player.getWorld().getName());
+        WorldData worldData = FxBiomeRTP.getInstance().getPersistenceData().getWorldData(world.getName());
         String biome = args.requireOne("biome").toString().toLowerCase();
         if (!worldData.hasBiome(biome)) {
-            player.sendMessage(Text.of(TextColors.RED, "Cannot find biome '" + biome + "'"));
+            player.sendMessage(Text.of(PREFIX, TextColors.RED, "Cannot find biome '" + biome + "'"));
             return CommandResult.empty();
         }
 
         int[] coords = worldData.getBiomeData(biome).getRandomCoord();
-		Location<World> worldloc = new Location<>(player.getWorld(), coords[0], 90, coords[1]);
+		Location<World> worldloc = new Location<>(world, coords[0], 90, coords[1]);
 		Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldloc, 30, 5);
         if (optionalTargetLoc.isPresent()) {
             Location<World> targetloc = optionalTargetLoc.get();
             player.setLocation(targetloc);
-            player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported to a(n) " + player.getLocation().getBiome().getName() + " biome!"));
+            player.sendMessage(Text.of(PREFIX, TextColors.GREEN, "You have been randomly teleported to the " + player.getLocation().getBiome().getName() + " biome!"));
+        }
+        if (FxBiomeRTP.getInstance().getConfig().getBiomeRtpCooldown() > 0 && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "biomertp")) {
+            COOLDOWN.addPlayer(player);
         }
         return CommandResult.success();
     }

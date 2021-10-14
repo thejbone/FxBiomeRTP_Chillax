@@ -29,6 +29,10 @@ import org.spongepowered.api.entity.living.player.Player;
 public interface ICooldown {
     void addPlayer(Player player);
 
+    long getPlayerDelay(Player player);
+
+    String getPlayerDelayFormatted(Player player);
+
     boolean isValid(Player player);
 
     int getDelay();

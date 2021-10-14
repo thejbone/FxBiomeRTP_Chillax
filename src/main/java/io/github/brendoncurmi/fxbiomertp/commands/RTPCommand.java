@@ -29,6 +29,7 @@ import io.github.brendoncurmi.fxbiomertp.PluginInfo;
 import io.github.brendoncurmi.fxbiomertp.api.ICooldown;
 import io.github.brendoncurmi.fxbiomertp.api.MathUtils;
 import io.github.brendoncurmi.fxbiomertp.impl.Cooldown;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -54,11 +55,13 @@ public class RTPCommand implements CommandExecutor {
 
     private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getRtpCooldown());
 
+    private static final Text PREFIX = Text.of(TextColors.GOLD,"[",TextColors.GREEN,"RTP",TextColors.GOLD,"] ");
+
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         Optional<Player> target = args.getOne("target");
         if (!(src instanceof Player) && !target.isPresent()) {
-            src.sendMessage(Text.of(TextColors.RED, "Using the command from this source requires specifying a target"));
+            src.sendMessage(Text.of(PREFIX,TextColors.RED, "Using the command from this source requires specifying a target"));
             return CommandResult.empty();
         }
         Player player = target.orElseGet(() -> (Player) src);
@@ -67,27 +70,43 @@ public class RTPCommand implements CommandExecutor {
                 && FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
                 && !src.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
             if (!COOLDOWN.isValid((Player) src)) {
-                throw new CommandException(Text.of(TextColors.RED, "You can only use this command every " + COOLDOWN.getDelay() + "s"));
+                throw new CommandException(Text.of(PREFIX,TextColors.RED, "You can run this command again in " + COOLDOWN.getPlayerDelayFormatted((Player) src)));
             }
             COOLDOWN.addPlayer((Player) src);
         }
 
-        World world = player.getWorld();
+        Location<World> worldLoc = generateLocation(0);
+        tpRandom(worldLoc, (Player) src, target, player);
+
+        return CommandResult.success();
+    }
+
+    public Location<World> generateLocation(int recursionEnd){
+        World world = Sponge.getServer().getWorld("world").get();
         WorldBorder border = world.getWorldBorder();
         int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) x = -x;
         int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
+
         Location<World> worldLoc = new Location<>(world, x, 90, z);
+        Location<World> waterMaybe = new Location<>(world, worldLoc.getBlockX(), 61, worldLoc.getBlockZ());
+        if((waterMaybe.getBlock().getType().equals(BlockTypes.WATER) || waterMaybe.getBlock().getType().equals(BlockTypes.FLOWING_WATER)) && recursionEnd < 5) {
+            worldLoc = generateLocation(recursionEnd++);
+        }
+
+        return worldLoc;
+    }
+
+    public void tpRandom(Location<World> worldLoc, Player src, Optional<Player> target, Player player){
         Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldLoc, 30, 5);
         if (optionalTargetLoc.isPresent()) {
             Location<World> targetLoc = optionalTargetLoc.get();
             player.setLocation(targetLoc);
-            player.sendMessage(Text.of(TextColors.GREEN, "You have been randomly teleported!"));
+            player.sendMessage(Text.of(PREFIX,TextColors.GREEN, "You have been randomly teleported!"));
             if (target.isPresent() && (!(src instanceof Player) || ((Player) src).getUniqueId() != target.get().getUniqueId())) {
-                src.sendMessage(Text.of(TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
+                src.sendMessage(Text.of(PREFIX,TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
             }
         }
-        return CommandResult.success();
     }
 }

@@ -44,6 +44,13 @@ public class Cooldown implements ICooldown {
         cache.put(player, now() + delay);
     }
 
+    public long getPlayerDelay(Player player) {  return (cache.get(player) - now()); }
+
+    public String getPlayerDelayFormatted(Player player){
+        long delay = getPlayerDelay(player);
+        return (delay / 60) + " mins and " + (delay % 60) + " secs";
+    }
+
     @Override
     public boolean isValid(Player player) {
         return !cache.containsKey(player) || cache.get(player) < now();
