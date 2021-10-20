@@ -38,12 +38,19 @@ public class Config extends AbstractConfig {
     @Setting("rtp-cooldown")
     private int rtpCooldown = 0;
     @Inject
+    @Setting("rtp-radius")
+    private int rtpRadius = 0;
+    @Inject
     @Setting("biomertp-cooldown")
     private int biomeRtpCooldown = 0;
 
     @Override
     public int getRtpCooldown() {
         return rtpCooldown;
+    }
+
+    public int getRtpRadius() {
+        return rtpRadius;
     }
 
     @Override

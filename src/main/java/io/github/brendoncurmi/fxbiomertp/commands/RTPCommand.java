@@ -38,6 +38,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextFormat;
+import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldBorder;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
@@ -52,6 +54,7 @@ public class RTPCommand implements CommandExecutor {
      * The maximum number of blocks along each axis the player can teleport to.
      */
     private static final int MAX_BLOCKS = 1000000;
+    private static final double DISTANCE = FxBiomeRTP.getInstance().getConfig().getRtpRadius();
 
     private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getRtpCooldown());
 
@@ -65,48 +68,54 @@ public class RTPCommand implements CommandExecutor {
             return CommandResult.empty();
         }
         Player player = target.orElseGet(() -> (Player) src);
+        Location<World> worldLoc;
 
         if (src instanceof Player
                 && FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
                 && !src.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
             if (!COOLDOWN.isValid((Player) src)) {
-                throw new CommandException(Text.of(PREFIX,TextColors.RED, "You can run this command again in " + COOLDOWN.getPlayerDelayFormatted((Player) src)));
+                worldLoc = generateLocation(0, 500);
+                tpRandom(worldLoc, (Player) src, target, player, true);
+                throw new CommandException(Text.of(PREFIX, TextColors.YELLOW, "You cannot normal RTP for " + COOLDOWN.getPlayerDelayFormatted((Player) src), ". You have been teleported to the COOLDOWN RTP zone."));
             }
             COOLDOWN.addPlayer((Player) src);
         }
 
-        Location<World> worldLoc = generateLocation(0);
-        tpRandom(worldLoc, (Player) src, target, player);
+        double getDiameter = DISTANCE > 0 ? DISTANCE : 10000.00;
+        worldLoc = generateLocation(0, getDiameter);
+        tpRandom(worldLoc, (Player) src, target, player, false);
 
         return CommandResult.success();
     }
 
-    public Location<World> generateLocation(int recursionEnd){
+    public Location<World> generateLocation(int recursionEnd, double diameter){
         World world = Sponge.getServer().getWorld("world").get();
-        WorldBorder border = world.getWorldBorder();
-        int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
+        int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((diameter - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) x = -x;
-        int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((border.getDiameter() - 1) / 2)));
+        int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((diameter - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) z = -z;
 
         Location<World> worldLoc = new Location<>(world, x, 90, z);
         Location<World> waterMaybe = new Location<>(world, worldLoc.getBlockX(), 61, worldLoc.getBlockZ());
         if((waterMaybe.getBlock().getType().equals(BlockTypes.WATER) || waterMaybe.getBlock().getType().equals(BlockTypes.FLOWING_WATER)) && recursionEnd < 5) {
-            worldLoc = generateLocation(recursionEnd++);
+            worldLoc = generateLocation(recursionEnd++, diameter);
         }
 
         return worldLoc;
     }
 
-    public void tpRandom(Location<World> worldLoc, Player src, Optional<Player> target, Player player){
+    public void tpRandom(Location<World> worldLoc, Player src, Optional<Player> target, Player player, boolean cooldown){
         Optional<Location<World>> optionalTargetLoc = Sponge.getTeleportHelper().getSafeLocation(worldLoc, 30, 5);
         if (optionalTargetLoc.isPresent()) {
             Location<World> targetLoc = optionalTargetLoc.get();
             player.setLocation(targetLoc);
-            player.sendMessage(Text.of(PREFIX,TextColors.GREEN, "You have been randomly teleported!"));
+            if (!cooldown)
+                player.sendMessage(Text.of(PREFIX,TextColors.GREEN, "You have been randomly teleported!"));
             if (target.isPresent() && (!(src instanceof Player) || ((Player) src).getUniqueId() != target.get().getUniqueId())) {
-                src.sendMessage(Text.of(PREFIX,TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
+                if(!cooldown)
+                    src.sendMessage(Text.of(PREFIX,TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
             }
+            player.sendMessage(Text.of(PREFIX, TextColors.YELLOW, "You arrived at " + player.getLocation().getX() + ", " + player.getLocation().getY() + ", " + player.getLocation().getZ(), " in the world."));
         }
     }
 }
