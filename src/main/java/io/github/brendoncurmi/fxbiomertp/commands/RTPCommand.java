@@ -81,9 +81,14 @@ public class RTPCommand implements CommandExecutor {
         }
         Player player = target.orElseGet(() -> (Player) src);
 
-        WARMUP.addPlayer(player);
-        Task warmup = Task.builder().execute(new WarmUp(player, target))
-                .interval(1, TimeUnit.SECONDS).name("Warmup for " + player.getName() + " RTP").submit(FxBiomeRTP.getInstance());
+        if(!WARMUP.isValid(player)){
+            WARMUP.addPlayer(player);
+            Task warmup = Task.builder().execute(new WarmUp(player, target))
+                    .interval(1, TimeUnit.SECONDS).name("Warmup for " + player.getName() + " RTP").submit(FxBiomeRTP.getInstance());
+        }
+        else if(WARMUP.isValid(player)){
+            player.sendMessage(Text.of(PREFIX,TextColors.RED, "You are already RTPing!"));
+        }
 
         return CommandResult.success();
     }
@@ -93,13 +98,13 @@ public class RTPCommand implements CommandExecutor {
             if (FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
                     && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
                 if (!COOLDOWN.isValid((player))) {
-                    worldLoc = generateLocation(0, 500);
+                    worldLoc = generateLocation(0, 1000);
                     tpRandom(worldLoc, player, target, player, true);
-                    throw new CommandException(Text.of(PREFIX, TextColors.YELLOW, "You cannot normal RTP for " + COOLDOWN.getPlayerDelayFormatted(player), ". You have been teleported to the COOLDOWN RTP zone."));
+                    player.sendMessage(Text.of(PREFIX, TextColors.GREEN, "You cannot normal RTP for " + COOLDOWN.getPlayerDelayFormatted(player), ". You have been teleported to the COOLDOWN RTP zone."));
+                    return;
                 }
                 COOLDOWN.addPlayer(player);
             }
-
 
             double getDiameter = DISTANCE > 0 ? DISTANCE : 10000.00;
             worldLoc = generateLocation(0, getDiameter);
