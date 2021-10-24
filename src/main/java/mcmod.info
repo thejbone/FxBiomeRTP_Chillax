@@ -9,7 +9,7 @@
         "url": "https://ore.spongepowered.org/FusionDev/FxBiomeRTP",
         "sourceUrl": "https://github.com/BrendonCurmi/FxBiomeRTP",
         "dependencies": [
-            "spongeapi@7.1.0"
+            "spongeapi@7.3.0"
         ]
     }
 ]

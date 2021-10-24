@@ -35,6 +35,7 @@ import io.github.brendoncurmi.fxbiomertp.commands.elements.BiomeCommandElement;
 import io.github.brendoncurmi.fxbiomertp.commands.BiomeRTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
 import io.github.brendoncurmi.fxbiomertp.commands.elements.WorldCommandElement;
+import io.github.brendoncurmi.fxbiomertp.impl.Warmup;
 import io.github.brendoncurmi.fxbiomertp.impl.config.Config;
 import io.github.brendoncurmi.fxbiomertp.impl.data.PersistenceData;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -44,12 +45,16 @@ import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -69,13 +74,17 @@ import java.util.Optional;
         authors = {"FusionDev"},
         description = FxBiomeRTP.DESCRIPTION,
         dependencies = {
-                @Dependency(id = "spongeapi", version = "7.1.0")
+                @Dependency(id = "spongeapi", version = "7.3.0")
         })
 public class FxBiomeRTP extends PluginInfo {
 
     private static FxBiomeRTP instance;
 
     private Path configDir;
+
+    @Inject
+    public PluginContainer container;
+
     private Logger logger;
     private File file;
     private PersistenceData persistenceData;
@@ -94,7 +103,6 @@ public class FxBiomeRTP extends PluginInfo {
     @Listener
     public void preInit(GamePreInitializationEvent event) throws IllegalAccessException {
         file = Paths.get(this.configDir.toString(), "scans.ser").toFile();
-
         fileFactory = new FileFactory();
         persistenceData = file.exists() ? (PersistenceData) fileFactory.deserialize(file.getAbsolutePath()) : new PersistenceData();
 
@@ -129,6 +137,8 @@ public class FxBiomeRTP extends PluginInfo {
         }
 
         BiomeUtils.initBiomes();
+
+        Sponge.getEventManager().registerListeners(container, new RTPCommand());
 
         Sponge.getCommandManager().register(instance, CommandSpec.builder()
                 .permission(CMD_PERM + "biomertp")

@@ -24,6 +24,8 @@
 
 package io.github.brendoncurmi.fxbiomertp;
 
+import io.github.brendoncurmi.fxbiomertp.commands.RTPCommand;
+
 public class PluginInfo {
     public static final String ID = "fxbiomertp";
     public static final String NAME = "FxBiomeRTP";
@@ -33,4 +35,5 @@ public class PluginInfo {
     public static final String CMD_PERM = ID + ".command.";
     public static final String COOLDOWN_PERM = ID + ".cooldown.";
     public static final String ADMIN_PERM = CMD_PERM + "admin.";
+
 }

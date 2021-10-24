@@ -29,13 +29,21 @@ import io.github.brendoncurmi.fxbiomertp.PluginInfo;
 import io.github.brendoncurmi.fxbiomertp.api.ICooldown;
 import io.github.brendoncurmi.fxbiomertp.api.MathUtils;
 import io.github.brendoncurmi.fxbiomertp.impl.Cooldown;
+import io.github.brendoncurmi.fxbiomertp.impl.Warmup;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.CommandBlock;
+import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.source.CommandBlockSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextFormat;
@@ -47,6 +55,8 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @NonnullByDefault
 public class RTPCommand implements CommandExecutor {
@@ -57,6 +67,8 @@ public class RTPCommand implements CommandExecutor {
     private static final double DISTANCE = FxBiomeRTP.getInstance().getConfig().getRtpRadius();
 
     private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getRtpCooldown());
+    private static final Warmup WARMUP = new Warmup(5);
+    Task.Builder taskBuilder = Task.builder();
 
     private static final Text PREFIX = Text.of(TextColors.GOLD,"[",TextColors.GREEN,"RTP",TextColors.GOLD,"] ");
 
@@ -68,24 +80,30 @@ public class RTPCommand implements CommandExecutor {
             return CommandResult.empty();
         }
         Player player = target.orElseGet(() -> (Player) src);
-        Location<World> worldLoc;
 
-        if (src instanceof Player
-                && FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
-                && !src.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
-            if (!COOLDOWN.isValid((Player) src)) {
-                worldLoc = generateLocation(0, 500);
-                tpRandom(worldLoc, (Player) src, target, player, true);
-                throw new CommandException(Text.of(PREFIX, TextColors.YELLOW, "You cannot normal RTP for " + COOLDOWN.getPlayerDelayFormatted((Player) src), ". You have been teleported to the COOLDOWN RTP zone."));
-            }
-            COOLDOWN.addPlayer((Player) src);
-        }
-
-        double getDiameter = DISTANCE > 0 ? DISTANCE : 10000.00;
-        worldLoc = generateLocation(0, getDiameter);
-        tpRandom(worldLoc, (Player) src, target, player, false);
+        WARMUP.addPlayer(player);
+        Task warmup = Task.builder().execute(new WarmUp(player, target))
+                .interval(1, TimeUnit.SECONDS).name("Warmup for " + player.getName() + " RTP").submit(FxBiomeRTP.getInstance());
 
         return CommandResult.success();
+    }
+
+    public void runTeleport(Player player, Optional<Player> target) throws CommandException {
+        Location<World> worldLoc;
+            if (FxBiomeRTP.getInstance().getConfig().getRtpCooldown() > 0
+                    && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")) {
+                if (!COOLDOWN.isValid((player))) {
+                    worldLoc = generateLocation(0, 500);
+                    tpRandom(worldLoc, player, target, player, true);
+                    throw new CommandException(Text.of(PREFIX, TextColors.YELLOW, "You cannot normal RTP for " + COOLDOWN.getPlayerDelayFormatted(player), ". You have been teleported to the COOLDOWN RTP zone."));
+                }
+                COOLDOWN.addPlayer(player);
+            }
+
+
+            double getDiameter = DISTANCE > 0 ? DISTANCE : 10000.00;
+            worldLoc = generateLocation(0, getDiameter);
+            tpRandom(worldLoc, player, target, player, false);
     }
 
     public Location<World> generateLocation(int recursionEnd, double diameter){
@@ -116,6 +134,43 @@ public class RTPCommand implements CommandExecutor {
                     src.sendMessage(Text.of(PREFIX,TextColors.GREEN, target.get().getName() + " has been randomly teleported!"));
             }
             player.sendMessage(Text.of(PREFIX, TextColors.YELLOW, "You arrived at " + player.getLocation().getX() + ", " + player.getLocation().getY() + ", " + player.getLocation().getZ(), " in the world."));
+        }
+    }
+
+    @Listener
+    public void onPlayerMovementCancelWarmUp(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
+        if(WARMUP.isValid(player)){
+            WARMUP.removePlayer(player);
+            player.sendMessage(Text.of(PREFIX,TextColors.RED, "You moved! RTP Cancelled!"));
+        }
+    }
+
+    private class WarmUp implements Consumer<Task> {
+        private int seconds = 5;
+        private Player player;
+        private Optional<Player> target;
+        public WarmUp(Player player, Optional<Player> target){
+            this.player = player;
+            this.target = target;
+        }
+        @Override
+        public void accept(Task task) {
+            if (seconds > 0 && WARMUP.isValid(player)){
+                this.player.sendMessage(Text.of(PREFIX,TextColors.GREEN, "Please wait " + seconds + " seconds. Don't move."));
+            }
+            if(!WARMUP.isValid(player)){
+                task.cancel();
+            }
+            seconds--;
+            if (seconds < 0){
+                WARMUP.removePlayer(player);
+                try {
+                    runTeleport(player, target);
+                } catch (CommandException e) {
+                    e.printStackTrace();
+                }
+                task.cancel();
+            }
         }
     }
 }
