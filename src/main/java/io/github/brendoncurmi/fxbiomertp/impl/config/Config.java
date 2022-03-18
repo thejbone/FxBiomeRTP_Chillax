@@ -43,10 +43,17 @@ public class Config extends AbstractConfig {
     @Inject
     @Setting("biomertp-cooldown")
     private int biomeRtpCooldown = 0;
+    @Inject
+    @Setting("rtp-world")
+    private String world = "world";
+
 
     @Override
     public int getRtpCooldown() {
         return rtpCooldown;
+    }
+    public String getWorld() {
+        return world;
     }
 
     public int getRtpRadius() {

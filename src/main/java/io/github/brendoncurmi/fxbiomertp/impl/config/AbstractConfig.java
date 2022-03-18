@@ -27,4 +27,6 @@ package io.github.brendoncurmi.fxbiomertp.impl.config;
 public abstract class AbstractConfig {
     public abstract int getRtpCooldown();
     public abstract int getBiomeRtpCooldown();
+
+    public abstract String getWorld();
 }

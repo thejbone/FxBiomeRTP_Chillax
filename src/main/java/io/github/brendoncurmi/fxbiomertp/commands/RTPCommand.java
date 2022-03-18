@@ -65,6 +65,7 @@ public class RTPCommand implements CommandExecutor {
      */
     private static final int MAX_BLOCKS = 1000000;
     private static final double DISTANCE = FxBiomeRTP.getInstance().getConfig().getRtpRadius();
+    private static final String WORLD = !FxBiomeRTP.getInstance().getConfig().getWorld().isEmpty() ? FxBiomeRTP.getInstance().getConfig().getWorld() : "world";
 
     private static final ICooldown COOLDOWN = new Cooldown(FxBiomeRTP.getInstance().getConfig().getRtpCooldown());
     private static final Warmup WARMUP = new Warmup(5);
@@ -81,10 +82,13 @@ public class RTPCommand implements CommandExecutor {
         }
         Player player = target.orElseGet(() -> (Player) src);
 
-        if(!WARMUP.isValid(player)){
+        if(!WARMUP.isValid(player) && !player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")){
             WARMUP.addPlayer(player);
             Task warmup = Task.builder().execute(new WarmUp(player, target))
                     .interval(1, TimeUnit.SECONDS).name("Warmup for " + player.getName() + " RTP").submit(FxBiomeRTP.getInstance());
+        }
+        else if(player.hasPermission(PluginInfo.COOLDOWN_PERM + "rtp")){
+            runTeleport(player, target);
         }
         else if(WARMUP.isValid(player)){
             player.sendMessage(Text.of(PREFIX,TextColors.RED, "You are already RTPing!"));
@@ -112,7 +116,7 @@ public class RTPCommand implements CommandExecutor {
     }
 
     public Location<World> generateLocation(int recursionEnd, double diameter){
-        World world = Sponge.getServer().getWorld("world").get();
+        World world = Sponge.getServer().getWorld(WORLD).get();
         int x = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((diameter - 1) / 2)));
         if (MathUtils.getRandomNumberInRange(0, 1) == 0) x = -x;
         int z = MathUtils.getRandomNumberInRange(0, Math.min(MAX_BLOCKS, (int) ((diameter - 1) / 2)));
